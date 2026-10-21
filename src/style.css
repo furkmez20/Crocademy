@@ -1,0 +1,5 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base { html,body,#root{min-height:100%;width:100%;margin:0;padding:0} body{overscroll-behavior:none;background:#faf8ff;color:#131b2e;font-family:'Be Vietnam Pro',sans-serif;font-size:14px;line-height:22px} main>:first-child{margin-top:0!important} main>:last-child{margin-bottom:0!important} }
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-feature-settings:'liga';-webkit-font-smoothing:antialiased}.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px)}

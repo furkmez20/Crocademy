@@ -1,7 +1,7 @@
 import { deadlines, focusTasks, initialTasks, user } from '../data/mockData';
 
-// Small replaceable intent layer: text in, user-facing response + display card + app action out.
-export function crocBrain(input) {
+// Local fallback used when the API is offline, unavailable, or takes too long.
+function keywordFallback(input) {
   const text = String(input || '').toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
   const exam = deadlines.find(item => item.title === 'Organic Chem Midterm');
   if (/(plan|make|build|create).*(3|three).*day.*(sprint|plan|midterm|organic|chem)|organic.*(midterm|chem).*(3|three).*day/.test(text)) {
@@ -44,4 +44,37 @@ export function crocBrain(input) {
     return {reply:`I added ${topicName} to ${subjectName}.`,card:{type:'subject',title:'Topic added',subtitle:`${topicName} · ${subjectName}`},action:{type:'add_topic',label:`Added ${topicName}`,subjectName,topicName}};
   }
   return {reply:'I want to make sure I get that right. Which mission should I help with: Calculus, Organic Chem, or History?',card:null,action:null};
+}
+
+// The API key stays on the Express server. This client sends only the message,
+// recent turns, and the current app snapshot to the same-origin proxy.
+export async function crocBrain(input,context={}) {
+  const controller=new AbortController();
+  const timeout=window.setTimeout(()=>controller.abort(),11000);
+  let reason='Unknown error';
+  try{
+    let response;
+    try{
+      response=await fetch('/api/croc',{method:'POST',headers:{'content-type':'application/json'},signal:controller.signal,body:JSON.stringify({message:String(input||''),history:Array.isArray(context.history)?context.history.slice(-6):[],state:context.state||{}})});
+    }catch(error){
+      if(error?.name==='AbortError')reason='Request timed out';
+      else if(error instanceof TypeError)reason='No server';
+      else reason='Network error';
+      throw error;
+    }
+    if(!response.ok){
+      const body=await response.json().catch(()=>({}));
+      reason=body.reason||({401:'Bad API key',403:'Bad API key',404:'Invalid model',429:'Rate limited',502:'Model unavailable',503:'Server not configured'}[response.status]||`Server error (${response.status})`);
+      throw new Error(`${reason}: ${body.error||response.statusText||'request failed'}`);
+    }
+    const result=await response.json();
+    if(typeof result.reply!=='string'||!Object.hasOwn(result,'action')||!Object.hasOwn(result,'card')){reason='Invalid server response';throw new Error('Croc API response did not match the expected shape');}
+    return result;
+  }catch(error){
+    console.error(`[Croc] Falling back: ${reason}`,error);
+    const fallback=keywordFallback(input);
+    return {...fallback,reply:`I'm offline, trying the basics. ${fallback.reply}`,offline:true,fallbackReason:reason};
+  }finally{
+    window.clearTimeout(timeout);
+  }
 }

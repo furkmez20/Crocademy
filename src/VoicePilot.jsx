@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, AudioLines, CalendarPlus, Check, CircleHelp, History, Keyboard, RotateCcw, Send, Sparkles, StopCircle, Waves, X } from 'lucide-react';
 import { Card, PTTButton } from './components';
-import { focusTasks, user } from './data/mockData';
+import { focusTasks, plannerDeadlines, user } from './data/mockData';
 import crocMascot from './assets/croc-mascot.png';
 import { crocBrain } from './lib/crocBrain';
 import { useTasks } from './data/TaskContext';
@@ -10,13 +10,79 @@ import { buildInsights, formatMinutes } from './data/insightsMetrics';
 
 const commands=['Plan a 3-day sprint for my Organic Chemistry midterm','What’s on my plan today?','Start a 25 minute sprint','Add 5 minutes','How did I do this week?'];
 const labels={idle:'Ready when you are',listening:'Croc is listening carefully...',thinking:'Checking your schedule...',speaking:'Croc is speaking...',clarification:'Clarification needed',error:'Didn’t catch that'};
+const TODAY='2026-10-21';
+const taskSubject=value=>{const text=String(value||'').toLowerCase();if(text.includes('calcul'))return 'Calculus';if(text.includes('history'))return 'History';if(text.includes('organic')||text.includes('chem'))return 'Organic Chem';return value||'Organic Chem';};
+function dueDate(value){if(/^\d{4}-\d{2}-\d{2}$/.test(String(value||'')))return value;const text=String(value||'').toLowerCase();if(text.includes('tomorrow')){const date=new Date(`${TODAY}T12:00:00`);date.setDate(date.getDate()+1);return date.toISOString().slice(0,10);}return TODAY;}
+function availableStart(tasks,date,duration){const blocks=tasks.filter(task=>task.date===date&&task.status!=='done').map(task=>{const [hour,minute]=String(task.start||'09:00').split(':').map(Number);return {start:hour*60+minute,end:hour*60+minute+Number(task.duration||0)}}).sort((a,b)=>a.start-b.start);let cursor=9*60;for(const block of blocks){if(cursor+duration<=block.start)break;if(cursor<block.end)cursor=block.end;}return `${String(Math.floor(cursor/60)).padStart(2,'0')}:${String(cursor%60).padStart(2,'0')}`;}
+function normalizeAction(action,tasks){
+  if(!action||!action.params)return action;
+  const {type,params}=action;
+  if(type==='start_focus'){
+    const selected=params.task?tasks.find(task=>task.id===params.task||task.title.toLowerCase().includes(String(params.task).toLowerCase())):null;
+    return {type:'start_timer',minutes:params.minutes,taskId:selected?.id,label:'Started a focus session'};
+  }
+  if(type==='add_minutes')return {type:'add_time',minutes:params.n,label:`Added ${params.n} minutes`};
+  if(type==='pause_timer')return {type:'pause_timer',label:'Paused your focus timer'};
+  if(type==='resume_timer')return {type:'resume_timer',label:'Resumed your focus timer'};
+  if(type==='end_session')return {type:'end_session',label:'Ended your focus session'};
+  if(type==='add_task'){
+    const date=dueDate(params.due);const duration=Number(params.minutes)||45;const subject=taskSubject(params.subject);
+    const task={title:params.title,subject,topic:'Added by Croc',priority:'medium',duration,date,start:availableStart(tasks,date,duration),status:'todo',subtasks:[]};
+    return {type:'add_task',label:'Added a study task',task};
+  }
+  if(type==='complete_task')return {type:'complete_task',taskId:params.id,label:'Completed a study task'};
+  if(type==='reschedule_task'){
+    const task=tasks.find(item=>item.id===params.id);const clock=String(params.newTime||'').match(/^(\d{1,2}):(\d{2})$/);
+    return task&&clock?{type:'reschedule_task',taskId:task.id,date:task.date,start:`${String(Number(clock[1])).padStart(2,'0')}:${clock[2]}`,label:'Rescheduled a study task'}:null;
+  }
+  if(type==='create_plan'){
+    const subject=taskSubject(params.subject);const count=Math.max(1,Math.min(30,Number(params.days)||1));const duration=Math.max(15,Math.min(600,Math.round(Number(params.hoursPerDay)*60)||60));
+    const tasksToAdd=Array.from({length:count},(_,index)=>{const date=new Date(`${TODAY}T12:00:00`);date.setDate(date.getDate()+index);const due=date.toISOString().slice(0,10);return {title:`${subject} study plan · Day ${index+1}`,subject,topic:`Day ${index+1} study plan`,priority:'medium',duration,date:due,start:availableStart(tasks,due,duration),status:'todo',subtasks:[]};});
+    return {type:'create_plan',subject,days:count,hoursPerDay:duration/60,tasks:tasksToAdd,label:`Created a ${count}-day ${subject} plan`};
+  }
+  if(type==='show_schedule')return {type:'show_schedule',label:'Opened your schedule'};
+  if(type==='show_progress')return {type:'show_progress',label:'Reviewed your progress'};
+  if(type==='set_topic_confidence')return {type:'set_confidence',subjectName:params.subject,topicName:params.topic,confidence:params.confidence,label:`Updated ${params.topic} confidence`};
+  return null;
+}
+async function callMcp(name,args){const response=await fetch('/api/mcp/tool',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name,arguments:args})});if(!response.ok)throw new Error(`MCP ${name} failed (${response.status})`);return response.json();}
+async function executeMcpAction(action){
+  if(!action)return false;
+  const type=action.type;let changed=false;
+  if(type==='start_timer'){await callMcp('start_focus_session',{minutes:action.minutes||25,task:action.taskId});changed=true;}
+  else if(type==='add_time'){await callMcp('update_focus_timer',{command:'add_minutes',minutes:action.minutes||5});changed=true;}
+  else if(type==='pause_timer'){await callMcp('update_focus_timer',{command:'pause'});changed=true;}
+  else if(type==='resume_timer'){await callMcp('update_focus_timer',{command:'resume'});changed=true;}
+  else if(type==='end_session'){await callMcp('update_focus_timer',{command:'end'});changed=true;}
+  else if(type==='add_task'){const task=action.task;await callMcp('add_task',{title:task.title,subject:task.subject,date:task.date,time:task.start,duration:task.duration,topic:task.topic,priority:task.priority});changed=true;}
+  else if(type==='complete_task'&&action.taskId){await callMcp('complete_task',{id:action.taskId});changed=true;}
+  else if(type==='reschedule_task'&&action.taskId){await callMcp('reschedule_task',{id:action.taskId,newTime:action.start,date:action.date});changed=true;}
+  else if(type==='create_plan'){if(action.subject&&action.days)await callMcp('create_study_plan',{subject:action.subject,days:action.days,hoursPerDay:action.hoursPerDay||1});else for(const task of action.tasks||[])await callMcp('add_task',{title:task.title,subject:task.subject,date:task.date,time:task.start,duration:task.duration,topic:task.topic,priority:task.priority});changed=true;}
+  else if(type==='show_schedule'){await callMcp('get_schedule',{});}
+  else if(type==='show_progress'){await callMcp('get_progress',{});}
+  else if(type==='set_confidence'){await callMcp('set_topic_confidence',{subject:action.subjectName||'Organic Chemistry',topic:action.topicName,confidence:action.confidence});changed=true;}
+  else if(type==='add_subject'){const subject=action.subject;await callMcp('add_subject',{name:subject.name,category:subject.category,chapters:subject.chapters});changed=true;}
+  else if(type==='add_topic'){await callMcp('add_topic',{subject:action.subjectName,topic:action.topicName});changed=true;}
+  return changed;
+}
+function normalizeCard(card){
+  if(!card||!card.data)return card;
+  const data=card.data;
+  if(card.type==='study_plan')return {type:'sprint',title:data.title||'Study Plan',subtitle:data.subtitle||data.summary,days:(data.items||[]).map((item,index)=>({day:item.day||`Day ${index+1}`,title:item.title,minutes:item.minutes||0,detail:item.detail}))};
+  if(card.type==='schedule')return {type:'today',title:data.title||'Your Schedule',items:(data.items||[]).map(item=>({title:item.title,subtitle:[item.time,item.detail,item.status].filter(Boolean).join(' · ')}))};
+  if(card.type==='progress')return {type:'weekly',title:data.title||'Your Progress',stats:data.stats||[]};
+  if(card.type==='quiz_question')return {type:'quiz',title:data.title||'Quick Quiz',subtitle:data.subtitle||data.summary,question:data.question,options:data.options||[]};
+  return null;
+}
 
 export function usePilotVoice(timer){
   const taskStore=useTasks();
+  const profile=taskStore.profile||user;
   const [status,setStatus]=useState('idle');
   const [transcript,setTranscript]=useState('');
-  const [reply,setReply]=useState(`Hi ${user.name}! Ask me about your study plan or start a focus sprint.`);
-  const [history,setHistory]=useState([]);
+  const [reply,setReply]=useState(`Hi ${profile.name}! Ask me about your study plan or start a focus sprint.`);
+  const [fallbackReason,setFallbackReason]=useState('');
+  const history=taskStore.conversations||[];
   const [activeId,setActiveId]=useState(null);
   const [mode,setMode]=useState('voice');
   const [input,setInput]=useState('');
@@ -39,35 +105,33 @@ export function usePilotVoice(timer){
 
   const processText=text=>{
     const clean=String(text||'').trim();if(!clean)return;
-    recognitionRef.current?.stop();window.speechSynthesis?.cancel();setTranscript(clean);setStatus('thinking');setReply('Checking your schedule...');setClarification('');
-    window.setTimeout(()=>{
-      let result=crocBrain(clean);const id=`conversation-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
+    recognitionRef.current?.stop();window.speechSynthesis?.cancel();setTranscript(clean);setStatus('thinking');setReply('Checking your schedule...');setFallbackReason('');setClarification('');
+    const state={todayMissions:taskStore.tasks.filter(task=>task.date===TODAY).map(task=>({id:task.id,title:task.title,subject:task.subject,status:task.status,time:task.start,minutes:task.duration})),deadlines:plannerDeadlines.map(item=>({title:item.title,subject:item.subject,date:item.date,status:item.subject==='Organic Chem'?'Midterm':'Draft'})),subjects:taskStore.subjects.map(subject=>{const topics=subject.chapters.flatMap(chapter=>chapter.topics);return {id:subject.id,name:subject.name,mastery:topics.length?Math.round(topics.reduce((sum,topic)=>sum+(Number(topic.confidence)||0),0)/topics.length*20):0,topics:topics.map(topic=>({name:topic.name,confidence:Number(topic.confidence)||0}))};}),timer:{running:timer.running,minutesRemaining:Math.ceil(timer.seconds/60),task:timer.task?.title||''},flightTime:timer.todayFlightTime,streak:profile.streak};
+    const turns=history.slice(0,6).reverse().map(item=>({prompt:item.prompt,reply:item.reply}));
+    window.setTimeout(async()=>{
+      const response=await crocBrain(clean,{history:turns,state});
+      setFallbackReason(response.fallbackReason||'');
+      let result={...response,action:normalizeAction(response.action,taskStore.tasks),card:normalizeCard(response.card)};
+      const id=`conversation-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
       if(result.action?.type==='show_progress'){
         const progress=buildInsights({tasks:taskStore.tasks,sessions:taskStore.sessions,subjects:taskStore.subjects});
         const behindQuestion=/(falling behind|behind in|weakest subject|most behind)/i.test(clean);
         const topic=progress.behind?.topic;
         result={...result,reply:behindQuestion?`Organic Chemistry is the subject to prioritize: your midterm is coming up, and ${topic?.name||'Reaction Mechanisms'} is your lowest-rated topic${topic?.confidence?` at ${topic.confidence}/5`:''}. A 45-minute review would be a good next step.`:`This week you studied ${formatMinutes(progress.weekMinutes)} across ${progress.sessions} sessions, completed ${progress.completedTasks} of ${progress.plannedTasks} planned blocks, kept a ${progress.streak}-day streak and earned ${progress.xp} XP. Today's study time is ${formatMinutes(progress.todayMinutes)}.`,card:{type:'progress',title:'Your Weekly Progress',stats:[{label:'Study time',value:formatMinutes(progress.weekMinutes)},{label:'Sessions',value:String(progress.sessions)},{label:'Plan completed',value:`${progress.completedTasks}/${progress.plannedTasks}`},{label:'Current streak',value:`${progress.streak} days`},{label:'XP earned',value:`+${progress.xp}`},{label:'Today',value:formatMinutes(progress.todayMinutes)}],activity:progress.activity}};
       }
-      if(result.card?.type==='today')result.card.items=taskStore.tasks.filter(task=>task.date==='2026-10-21').map(task=>({title:task.title,subtitle:`${task.subject} · ${task.start} · ${task.duration} min${task.status==='done'?' · Done':''}`}));
+      if(result.card?.type==='today'||result.action?.type==='show_schedule')result.card={type:'today',title:result.card?.title||'Today’s Flight Plan',items:taskStore.tasks.filter(task=>task.date===TODAY).map(task=>({title:task.title,subtitle:`${task.subject} · ${task.start} · ${task.duration} min${task.status==='done'?' · Done':''}`}))};
       const snapshot=timer.snapshot();
       const taskSnapshot=taskStore.tasks;
       const subjectSnapshot=taskStore.subjects;
-      if(result.action?.type==='start_timer')timer.startPomodoro();
-      else if(result.action?.type==='add_time')timer.addFive();
-      else if(result.action?.type==='pause_timer')timer.pause();
-      else if(result.action?.type==='distraction')timer.command('I got distracted');
-      else if(result.action?.type==='add_task')taskStore.addTask(result.action.task);
-      else if(result.action?.type==='complete_task'){const target=taskStore.tasks.find(task=>task.id===result.action.taskId)||taskStore.tasks.find(task=>task.subject===result.action.subject&&task.status!=='done');if(target)taskStore.completeTask(target.id);}
-      else if(result.action?.type==='reschedule_task'){const target=taskStore.tasks.find(task=>task.id===result.action.taskId)||taskStore.tasks.find(task=>task.subject==='History'&&task.status!=='done');if(target)taskStore.moveTask(target.id,result.action.date,result.action.start);}
-      else if(result.action?.type==='create_plan')result.action.tasks.forEach(task=>taskStore.addTask({...task,id:undefined}));
-      else if(result.action?.type==='add_subject')taskStore.addSubject(result.action.subject);
-      else if(result.action?.type==='add_topic'){const subject=taskStore.subjects.find(item=>item.name.toLowerCase()===result.action.subjectName.toLowerCase());if(subject)taskStore.addTopic(subject.id,subject.chapters[0]?.id,{name:result.action.topicName,confidence:0});}
-      else if(result.action?.type==='set_confidence'){const subject=taskStore.subjects.find(item=>item.id===result.action.subjectId)||taskStore.subjects.find(item=>item.name.toLowerCase().includes('organic'));const topic=subject?.chapters.flatMap(chapter=>chapter.topics).find(item=>item.id===result.action.topicId||item.name.toLowerCase()===result.action.topicName.toLowerCase());if(subject&&topic)taskStore.setTopicConfidence(subject.id,topic.id,result.action.confidence);}
+      if(result.action&&result.action.type!=='distraction'){
+        try{const changed=await executeMcpAction(result.action);if(changed)await taskStore.refresh();}
+        catch(error){console.error('[Croc] MCP action failed',error);result={...result,reply:'I could not update your shared StudyPilot state just now. Please try again.',card:null,action:null};}
+      }
       const entry={id,prompt:clean,reply:result.reply,card:result.card,action:result.action,snapshot,taskSnapshot,subjectSnapshot,calendarAdded:false,undone:false,createdAt:new Date()};
-      setHistory(items=>[entry,...items]);setActiveId(id);setReply(result.reply);
+      await taskStore.addConversation(entry);setActiveId(id);setReply(result.reply);
       if(!result.card){setClarification(result.reply);setStatus('clarification');return;}
       speak(result.reply);
-    },650);
+    },180);
   };
   processRef.current=processText;
 
@@ -86,28 +150,31 @@ export function usePilotVoice(timer){
     }catch{setStatus('error');setMode('text');setReply('Croc could not start the microphone. Type your request instead.');}
   };
 
+  const clearHistory=()=>{if(window.confirm('Clear all saved Croc conversations? This cannot be undone.')){taskStore.clearConversations();setActiveId(null);setTranscript('');setReply('Conversation history cleared.');}};
+
   const stopSpeaking=()=>{window.speechSynthesis?.cancel();setStatus('idle');};
   const submit=event=>{event?.preventDefault?.();if(input.trim()){processText(input);setInput('');}};
   const chooseClarification=value=>{setClarification('');processText(value==='Organic Chem'?'Plan a 3-day sprint for my Organic Chemistry midterm':`What is on my plan today? Focus on ${value}`);};
-  const addToCalendar=id=>setHistory(items=>items.map(item=>item.id===id?{...item,calendarAdded:true}:item));
+  const addToCalendar=id=>taskStore.updateConversation(id,{calendarAdded:true});
   const undo=id=>{
     const entry=history.find(item=>item.id===id);if(!entry)return;
-    if(entry.calendarAdded){setHistory(items=>items.map(item=>item.id===id?{...item,calendarAdded:false}:item));setReply('Removed that sprint from your calendar.');return;}
-    if(entry.action?.type==='add_time')timer.removeFive();
-    else if(entry.action?.type==='start_timer'||entry.action?.type==='pause_timer')timer.restore(entry.snapshot);
+    if(entry.calendarAdded){taskStore.updateConversation(id,{calendarAdded:false});setReply('Removed that sprint from your calendar.');return;}
+    if(entry.action?.type==='add_time')timer.removeMinutes(entry.action.minutes||5);
+    else if(['start_timer','pause_timer','resume_timer','end_session'].includes(entry.action?.type))timer.restore(entry.snapshot);
     if(entry.action?.type==='distraction')timer.undoDistraction();
     if(['add_task','complete_task','reschedule_task','create_plan'].includes(entry.action?.type))taskStore.replaceTasks(entry.taskSnapshot);
     if(['add_subject','add_topic','set_confidence'].includes(entry.action?.type))taskStore.replaceSubjects(entry.subjectSnapshot);
-    setHistory(items=>items.map(item=>item.id===id?{...item,undone:true}:item));setReply(`Undid: ${entry.action?.label||'that action'}.`);
+    taskStore.updateConversation(id,{undone:true});setReply(`Undid: ${entry.action?.label||'that action'}.`);
   };
 
+  useEffect(()=>{if(activeId===null&&history.length)setActiveId(history[0].id);},[history,activeId]);
   useEffect(()=>{
     const handle=event=>{const el=event.target;const focusedInput=el instanceof HTMLElement&&(el.isContentEditable||['INPUT','TEXTAREA','SELECT'].includes(el.tagName));if(event.code==='Space'&&!focusedInput){event.preventDefault();toggleListening();}};
     window.addEventListener('keydown',handle);return()=>window.removeEventListener('keydown',handle);
   },[]);
   useEffect(()=>()=>{recognitionRef.current?.stop();window.speechSynthesis?.cancel();},[]);
 
-  return {status,transcript,reply,history,activeId,activeEntry:history.find(item=>item.id===activeId),mode,input,setInput,showCommands,setShowCommands,tab,setTab,clarification,setClarification,toggleListening,stopSpeaking,submit,processText,chooseClarification,addToCalendar,undo};
+  return {status,transcript,reply,fallbackReason,history,activeId,activeEntry:history.find(item=>item.id===activeId),mode,input,setInput,showCommands,setShowCommands,tab,setTab,clarification,setClarification,toggleListening,stopSpeaking,submit,processText,chooseClarification,addToCalendar,undo,clearHistory};
 }
 
 function VoiceStage({voice}){
@@ -117,13 +184,14 @@ function VoiceStage({voice}){
 
 function TranscriptBubble({voice}){return <Card className="w-full p-4 shadow-sm"><div className="mb-2 flex items-center justify-between gap-2 text-on-surface-variant"><span className="flex items-center gap-2 font-label-sm text-label-sm uppercase tracking-wider"><span className={`h-2 w-2 rounded-full ${voice.status==='listening'?'animate-ping bg-primary':'bg-primary'}`}/>{voice.status==='listening'?'Listening live':'You said'}</span><span className="shrink-0 text-xs">{voice.transcript?'Just now':'Ready'}</span></div><p aria-live="polite" className={`break-words text-sm leading-6 ${voice.transcript?'text-on-surface':'text-on-surface-variant'}`}>{voice.transcript?`“${voice.transcript}”`:voice.status==='listening'?'Speak now...':'Your words will appear here when you speak.'}</p></Card>}
 
-function ReplyBubble({voice}){return <div className="w-full rounded-2xl bg-surface-container-low p-4 shadow-sm"><div className="mb-2 flex items-center justify-between gap-3"><div className="flex items-center gap-2 text-primary"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-white"><Sparkles size={17}/></span><span className="font-label-md text-label-md">Croc</span></div>{voice.status==='speaking'&&<button onClick={voice.stopSpeaking} className="flex shrink-0 items-center gap-1.5 rounded-full bg-surface-container-high px-3 py-1.5 text-xs font-semibold"><StopCircle size={15} className="text-error"/>Stop</button>}</div><p aria-live="polite" className="break-words text-sm leading-6 text-on-surface">{voice.reply}</p></div>}
+function ReplyBubble({voice}){return <div className="w-full rounded-2xl bg-surface-container-low p-4 shadow-sm"><div className="mb-2 flex items-center justify-between gap-3"><div className="flex items-center gap-2 text-primary"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-white"><Sparkles size={17}/></span><span className="font-label-md text-label-md">Croc</span></div>{voice.status==='speaking'&&<button onClick={voice.stopSpeaking} className="flex shrink-0 items-center gap-1.5 rounded-full bg-surface-container-high px-3 py-1.5 text-xs font-semibold"><StopCircle size={15} className="text-error"/>Stop</button>}</div><p aria-live="polite" className="break-words text-sm leading-6 text-on-surface">{voice.reply}</p>{voice.fallbackReason&&<p className="mt-2 text-xs font-semibold text-on-surface-variant">Fallback reason: {voice.fallbackReason}</p>}</div>}
 
 function ResultCard({entry,voice}){if(!entry?.card)return null;if(entry.undone)return <Card className="w-full p-4 text-sm text-on-surface-variant">Undone: {entry.action?.label||'the previous action'}.</Card>;const card=entry.card;const maxActivity=Math.max(1,...(card.activity||[]).map(item=>item.minutes));return <Card className="w-full space-y-4 p-4 shadow-md sm:p-5"><div className="flex min-w-0 items-start justify-between gap-3"><div className="flex min-w-0 items-start gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary-container text-on-secondary-container"><AudioLines size={18}/></span><div className="min-w-0"><h2 className="break-words font-headline-sm text-headline-sm">{card.title}</h2>{card.subtitle&&<p className="mt-1 break-words text-xs leading-5 text-on-surface-variant">{card.subtitle}</p>}</div></div><span className="shrink-0 rounded-full bg-tertiary-fixed px-2.5 py-1 text-[10px] font-bold text-on-tertiary-fixed">Study plan</span></div>
     {card.type==='sprint'&&<div className="space-y-2">{card.days.map((item,index)=><div key={item.day} className="flex min-w-0 items-start gap-3 rounded-xl bg-surface-container p-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{index+1}</span><div className="min-w-0 flex-1"><p className="break-words font-label-md text-label-md">{item.day}: {item.title}</p></div><span className="shrink-0 pt-0.5 text-sm font-bold text-primary">{item.minutes} min</span></div>)}</div>}
     {card.type==='today'&&<div className="space-y-2">{card.items.map((item,index)=><div key={item.title} className="flex min-w-0 items-start gap-3 rounded-xl bg-surface-container p-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{index+1}</span><div className="min-w-0"><p className="break-words font-label-md text-label-md">{item.title}</p><p className="mt-1 text-xs text-on-surface-variant">{item.subtitle}</p></div></div>)}</div>}
     {card.type==='weekly'&&<div className="grid gap-2 sm:grid-cols-3">{card.stats.map(item=><div key={item.label} className="min-w-0 rounded-xl bg-surface-container p-3"><p className="text-xs text-on-surface-variant">{item.label}</p><p className="mt-1 break-words font-label-md text-label-md text-on-surface">{item.value}</p></div>)}</div>}
     {card.type==='progress'&&<><div className="grid grid-cols-2 gap-2 sm:grid-cols-3">{card.stats.map(item=><div key={item.label} className="min-w-0 rounded-xl bg-surface-container p-3"><p className="text-xs text-on-surface-variant">{item.label}</p><p className="mt-1 break-words font-label-md text-label-md text-on-surface">{item.value}</p></div>)}</div><div className="rounded-xl bg-surface-container-low p-3"><p className="mb-3 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Study minutes by day</p><div className="grid grid-cols-7 items-end gap-1.5" role="img" aria-label="Weekly study time bar chart with minutes shown for each day">{card.activity.map(item=><div key={item.date} className="flex min-w-0 flex-col items-center gap-1"><span className="text-[9px] font-semibold text-on-surface-variant">{item.minutes}</span><div className="flex h-16 w-full items-end"><div className="w-full rounded-t bg-primary" style={{height:`${Math.max(item.minutes?8:0,item.minutes/maxActivity*100)}%`}}/></div><span className="text-[9px] font-semibold text-on-surface">{item.label}</span></div>)}</div><p className="mt-2 text-[10px] text-on-surface-variant">Minutes are labelled above each bar.</p></div></>}
+    {card.type==='quiz'&&<div className="space-y-3 rounded-xl bg-surface-container-low p-4"><p className="break-words font-label-md text-label-md">{card.question}</p>{card.options?.length>0&&<ol className="space-y-2">{card.options.map((option,index)=><li key={`${index}-${option}`} className="rounded-lg bg-white px-3 py-2 text-sm text-on-surface"><span className="mr-2 font-bold text-primary">{String.fromCharCode(65+index)}.</span>{option}</li>)}</ol>}</div>}
     {card.type==='timer'&&<div className="rounded-xl bg-surface-container p-3"><p className="break-words font-label-md text-label-md">{card.subtitle}</p><p className="mt-1 text-sm font-bold text-primary">{card.minutes?`${card.minutes} minutes`:'Timer updated'}</p></div>}
     {card.type==='task'&&<div className="rounded-xl bg-surface-container p-3"><p className="break-words font-label-md text-label-md">{card.subtitle}</p><p className="mt-1 text-xs text-on-surface-variant">This change is synced to your Home, Focus and Planner screens.</p></div>}
     {card.type==='subject'&&<div className="rounded-xl bg-surface-container p-3"><p className="break-words font-label-md text-label-md">{card.subtitle}</p><p className="mt-1 text-xs text-on-surface-variant">This change is saved in your shared subject library.</p></div>}
@@ -134,12 +202,12 @@ function ResultCard({entry,voice}){if(!entry?.card)return null;if(entry.undone)r
 function MessageCard({entry,voice}){return <article className="space-y-3 border-b border-surface-container pb-5 last:border-0"><Card className="bg-surface-container-lowest p-4"><p className="mb-1 font-label-sm text-label-sm uppercase tracking-wider text-primary">You said</p><p className="break-words text-sm leading-6">{entry.prompt}</p><p className="mb-1 mt-4 font-label-sm text-label-sm uppercase tracking-wider text-primary">Croc replied</p><p className="break-words text-sm leading-6 text-on-surface-variant">{entry.reply}</p></Card><ResultCard entry={entry} voice={voice}/></article>}
 
 export default function VoicePilot({voice}){
-  const navigate=useNavigate();const current=voice.activeEntry;
+  const navigate=useNavigate();const profile=useTasks().profile||user;const current=voice.activeEntry;
   const activeVoiceMode=voice.mode==='text';
   const cardCommand=(command)=>{voice.processText(command);voice.setShowCommands(false);};
   return <main className="relative mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4 pb-safe pt-safe sm:px-6 min-[768px]:min-h-screen min-[768px]:py-8 min-[768px]:pb-8">
     <header className="sticky top-0 z-20 -mx-4 mb-3 flex items-center justify-between gap-3 bg-surface/90 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:mb-5 sm:bg-transparent sm:px-0 sm:py-0"><div className="flex min-w-0 items-center gap-3"><button onClick={()=>navigate('/')} aria-label="Back to Cockpit" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface min-[768px]:hidden"><ArrowLeft size={20}/></button><div className="min-w-0"><p className="font-label-sm text-label-sm uppercase tracking-wider text-primary">Voice-first study assistant</p><h1 className="truncate font-headline-lg text-headline-lg">Croc Co-Pilot</h1><p className="truncate text-[10px] font-semibold text-on-surface-variant">{user.name} • Level {user.level} • {user.streak}-day streak</p></div></div><div className="flex shrink-0 rounded-full bg-surface-container-low p-1"><button onClick={()=>voice.setTab('chat')} className={`rounded-full px-3 py-1.5 text-xs font-bold ${voice.tab==='chat'?'bg-primary text-white':'text-on-surface-variant'}`}>Chat</button><button onClick={()=>voice.setTab('history')} className={`rounded-full px-3 py-1.5 text-xs font-bold ${voice.tab==='history'?'bg-primary text-white':'text-on-surface-variant'}`}>Conversations</button></div></header>
-    {voice.tab==='history'?<section className="min-h-0 flex-1"><div className="mb-4 flex items-center gap-2"><History size={20} className="text-primary"/><h2 className="font-headline-sm text-headline-sm">Conversations</h2><span className="ml-auto text-xs text-on-surface-variant">{voice.history.length} saved</span></div><div className="max-h-[calc(100dvh-180px)] space-y-5 overflow-y-auto pr-1">{voice.history.length?voice.history.map(entry=><MessageCard key={entry.id} entry={entry} voice={voice}/>):<Card className="p-6 text-center"><p className="font-label-md text-label-md">No conversations yet</p><p className="mt-1 text-sm text-on-surface-variant">Your voice chats and result cards will be saved here.</p></Card>}</div></section>:<>
+    {voice.tab==='history'?<section className="min-h-0 flex-1"><div className="mb-4 flex items-center gap-2"><History size={20} className="text-primary"/><h2 className="font-headline-sm text-headline-sm">Conversations</h2><span className="ml-auto text-xs text-on-surface-variant">{voice.history.length} saved</span><button onClick={voice.clearHistory} disabled={!voice.history.length} className="rounded-full bg-surface-container-high px-3 py-1.5 text-xs font-bold text-on-surface disabled:opacity-50">Clear history</button></div><div className="max-h-[calc(100dvh-180px)] space-y-5 overflow-y-auto pr-1">{voice.history.length?voice.history.map(entry=><MessageCard key={entry.id} entry={entry} voice={voice}/>):<Card className="p-6 text-center"><p className="font-label-md text-label-md">No conversations yet</p><p className="mt-1 text-sm text-on-surface-variant">Your voice chats and result cards will be saved here.</p></Card>}</div></section>:<>
       <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center"><VoiceStage voice={voice}/><div className="mt-6 w-full space-y-3"><TranscriptBubble voice={voice}/><ReplyBubble voice={voice}/>
         {voice.status==='clarification'&&<div className="flex w-full flex-wrap gap-2">{['Calculus','Organic Chem','History'].map(item=><button key={item} onClick={()=>voice.chooseClarification(item)} className="rounded-full bg-surface-container px-4 py-2 text-sm font-bold text-on-surface">{item}</button>)}</div>}
         {voice.status==='error'&&<div className="w-full rounded-2xl bg-error-container p-4 text-on-error-container"><p className="font-label-md text-label-md">Didn’t catch that</p><p className="mt-1 text-sm">{voice.reply}</p><button onClick={()=>voice.setMode('text')} className="mt-3 rounded-full bg-surface-container-lowest px-4 py-2 text-sm font-bold text-on-surface">Type instead</button></div>}

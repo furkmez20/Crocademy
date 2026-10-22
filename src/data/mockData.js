@@ -1,4 +1,14 @@
 export const user = { name: 'Alex', level: 4, title: 'Navigator', streak: 5, xp: 340, nextLevelXp: 500 };
+export const subjectColors = { Calculus: 'blue', 'Organic Chem': 'green', History: 'violet' };
+export const initialTasks = [
+  { id:'calc', title:'Calculus Morning Deep Work', subject:'Calculus', topic:'Derivatives Set 4', priority:'medium', duration:90, date:'2026-10-21', start:'09:00', status:'done', subtasks:['Complete derivatives set','Check solutions'] },
+  { id:'organic', title:'Reaction Mechanisms Flashcards', subject:'Organic Chem', topic:'SN1 vs SN2 nucleophilic substitutions', priority:'high', duration:45, date:'2026-10-21', start:'14:00', status:'todo', subtasks:['Review SN1 transition states','Compare polar protic vs aprotic solvents','Practice stereochemical inversion','Complete final 10 Anki speed cards'] },
+  { id:'history', title:'History Essay Outline & Sources', subject:'History', topic:'European Treaties Archive research', priority:'medium', duration:45, date:'2026-10-21', start:'16:30', status:'todo', subtasks:['Gather primary sources','Draft thesis statement'] },
+];
+export const plannerDeadlines = [
+  { date:'2026-10-22', title:'Organic Chem Midterm', subject:'Organic Chem' },
+  { date:'2026-10-23', title:'History Term Paper — Draft', subject:'History' },
+];
 export const telemetry = { flightTime: '2h 15m', targetTime: '3h 15m', flightPercent: 69, missions: '1 of 3 cleared', missionPercent: 33, xpToday: '+120 XP today' };
 export const mission = { subject: 'Organic Chem', time: '2:00 PM', duration: '45 mins', title: 'Reaction Mechanisms Flashcards', cards: '30 Spaced Repetition Cards', unit: 'Unit 4: Carbonyls', launchIn: '15m' };
 export const deadlines = [{ badge: 'In 4 Days', date: 'Thursday, 9:00 AM', title: 'Organic Chem Midterm', details: 'Focus: Nucleophilic Addition • Synthesis Pathways', footer: 'Prep Confidence', status: '78% Ready' }, { badge: 'Friday Draft', date: '5 Days Remaining', title: 'History Term Paper', details: 'Cold War Diplomacy • Primary Sources synthesis', footer: 'Outline & Draft', status: 'Step 2 of 4' }];

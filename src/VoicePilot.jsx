@@ -5,11 +5,13 @@ import { Card, PTTButton } from './components';
 import { focusTasks, user } from './data/mockData';
 import crocMascot from './assets/croc-mascot.png';
 import { crocBrain } from './lib/crocBrain';
+import { useTasks } from './data/TaskContext';
 
 const commands=['Plan a 3-day sprint for my Organic Chemistry midterm','What’s on my plan today?','Start a 25 minute sprint','Add 5 minutes','How did I do this week?'];
 const labels={idle:'Ready when you are',listening:'Croc is listening carefully...',thinking:'Checking your schedule...',speaking:'Croc is speaking...',clarification:'Clarification needed',error:'Didn’t catch that'};
 
 export function usePilotVoice(timer){
+  const taskStore=useTasks();
   const [status,setStatus]=useState('idle');
   const [transcript,setTranscript]=useState('');
   const [reply,setReply]=useState(`Hi ${user.name}! Ask me about your study plan or start a focus sprint.`);
@@ -39,12 +41,18 @@ export function usePilotVoice(timer){
     recognitionRef.current?.stop();window.speechSynthesis?.cancel();setTranscript(clean);setStatus('thinking');setReply('Checking your schedule...');setClarification('');
     window.setTimeout(()=>{
       const result=crocBrain(clean);const id=`conversation-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
+      if(result.card?.type==='today')result.card.items=taskStore.tasks.filter(task=>task.date==='2026-10-21').map(task=>({title:task.title,subtitle:`${task.subject} · ${task.start} · ${task.duration} min${task.status==='done'?' · Done':''}`}));
       const snapshot=timer.snapshot();
+      const taskSnapshot=taskStore.tasks;
       if(result.action?.type==='start_timer')timer.startPomodoro();
       else if(result.action?.type==='add_time')timer.addFive();
       else if(result.action?.type==='pause_timer')timer.pause();
       else if(result.action?.type==='distraction')timer.command('I got distracted');
-      const entry={id,prompt:clean,reply:result.reply,card:result.card,action:result.action,snapshot,calendarAdded:false,undone:false,createdAt:new Date()};
+      else if(result.action?.type==='add_task')taskStore.addTask(result.action.task);
+      else if(result.action?.type==='complete_task'){const target=taskStore.tasks.find(task=>task.id===result.action.taskId)||taskStore.tasks.find(task=>task.subject===result.action.subject&&task.status!=='done');if(target)taskStore.completeTask(target.id);}
+      else if(result.action?.type==='reschedule_task'){const target=taskStore.tasks.find(task=>task.id===result.action.taskId)||taskStore.tasks.find(task=>task.subject==='History'&&task.status!=='done');if(target)taskStore.moveTask(target.id,result.action.date,result.action.start);}
+      else if(result.action?.type==='create_plan')result.action.tasks.forEach(task=>taskStore.addTask({...task,id:undefined}));
+      const entry={id,prompt:clean,reply:result.reply,card:result.card,action:result.action,snapshot,taskSnapshot,calendarAdded:false,undone:false,createdAt:new Date()};
       setHistory(items=>[entry,...items]);setActiveId(id);setReply(result.reply);
       if(!result.card){setClarification(result.reply);setStatus('clarification');return;}
       speak(result.reply);
@@ -77,6 +85,7 @@ export function usePilotVoice(timer){
     if(entry.action?.type==='add_time')timer.removeFive();
     else if(entry.action?.type==='start_timer'||entry.action?.type==='pause_timer')timer.restore(entry.snapshot);
     if(entry.action?.type==='distraction')timer.undoDistraction();
+    if(['add_task','complete_task','reschedule_task','create_plan'].includes(entry.action?.type))taskStore.replaceTasks(entry.taskSnapshot);
     setHistory(items=>items.map(item=>item.id===id?{...item,undone:true}:item));setReply(`Undid: ${entry.action?.label||'that action'}.`);
   };
 
@@ -103,6 +112,7 @@ function ResultCard({entry,voice}){if(!entry?.card)return null;if(entry.undone)r
     {card.type==='today'&&<div className="space-y-2">{card.items.map((item,index)=><div key={item.title} className="flex min-w-0 items-start gap-3 rounded-xl bg-surface-container p-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{index+1}</span><div className="min-w-0"><p className="break-words font-label-md text-label-md">{item.title}</p><p className="mt-1 text-xs text-on-surface-variant">{item.subtitle}</p></div></div>)}</div>}
     {card.type==='weekly'&&<div className="grid gap-2 sm:grid-cols-3">{card.stats.map(item=><div key={item.label} className="min-w-0 rounded-xl bg-surface-container p-3"><p className="text-xs text-on-surface-variant">{item.label}</p><p className="mt-1 break-words font-label-md text-label-md text-on-surface">{item.value}</p></div>)}</div>}
     {card.type==='timer'&&<div className="rounded-xl bg-surface-container p-3"><p className="break-words font-label-md text-label-md">{card.subtitle}</p><p className="mt-1 text-sm font-bold text-primary">{card.minutes?`${card.minutes} minutes`:'Timer updated'}</p></div>}
+    {card.type==='task'&&<div className="rounded-xl bg-surface-container p-3"><p className="break-words font-label-md text-label-md">{card.subtitle}</p><p className="mt-1 text-xs text-on-surface-variant">This change is synced to your Home, Focus and Planner screens.</p></div>}
     {card.type==='note'&&<p className="rounded-xl bg-surface-container p-3 text-sm leading-6 text-on-surface-variant">{card.subtitle}</p>}
     <div className="flex flex-col gap-2 border-t border-surface-container pt-3 sm:flex-row">{card.type==='sprint'?<button onClick={()=>voice.addToCalendar(entry.id)} disabled={entry.calendarAdded} className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 font-label-md text-label-md text-white shadow-[0_3px_0_#005321] disabled:bg-surface-container-high disabled:text-on-surface-variant disabled:shadow-none">{entry.calendarAdded?<Check size={18}/>:<CalendarPlus size={18}/>}<span>{entry.calendarAdded?'Added to My Calendar':'Add to My Calendar'}</span></button>:<span className="flex min-h-11 flex-1 items-center justify-center rounded-full bg-surface-container-low px-4 py-2.5 text-sm font-semibold text-on-surface-variant">Action complete</span>}<button onClick={()=>voice.undo(entry.id)} className="flex min-h-11 items-center justify-center gap-2 rounded-full bg-surface-container-high px-4 py-2.5 font-label-md text-label-md text-on-surface"><RotateCcw size={16}/>Undo</button></div>
   </Card>}

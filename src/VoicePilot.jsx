@@ -17,37 +17,39 @@ function availableStart(tasks,date,duration){const blocks=tasks.filter(task=>tas
 function normalizeAction(action,tasks){
   if(!action||!action.params)return action;
   const {type,params}=action;
+  const executed=Boolean(action.executed);
   if(type==='start_focus'){
     const selected=params.task?tasks.find(task=>task.id===params.task||task.title.toLowerCase().includes(String(params.task).toLowerCase())):null;
-    return {type:'start_timer',minutes:params.minutes,taskId:selected?.id,label:'Started a focus session'};
+    return {type:'start_timer',minutes:params.minutes,taskId:selected?.id,label:'Started a focus session',executed};
   }
-  if(type==='add_minutes')return {type:'add_time',minutes:params.n,label:`Added ${params.n} minutes`};
-  if(type==='pause_timer')return {type:'pause_timer',label:'Paused your focus timer'};
-  if(type==='resume_timer')return {type:'resume_timer',label:'Resumed your focus timer'};
-  if(type==='end_session')return {type:'end_session',label:'Ended your focus session'};
+  if(type==='add_minutes')return {type:'add_time',minutes:params.n,label:`Added ${params.n} minutes`,executed};
+  if(type==='pause_timer')return {type:'pause_timer',label:'Paused your focus timer',executed};
+  if(type==='resume_timer')return {type:'resume_timer',label:'Resumed your focus timer',executed};
+  if(type==='end_session')return {type:'end_session',label:'Ended your focus session',executed};
   if(type==='add_task'){
     const date=dueDate(params.due);const duration=Number(params.minutes)||45;const subject=taskSubject(params.subject);
     const task={title:params.title,subject,topic:'Added by Croc',priority:'medium',duration,date,start:availableStart(tasks,date,duration),status:'todo',subtasks:[]};
-    return {type:'add_task',label:'Added a study task',task};
+    return {type:'add_task',label:'Added a study task',task,executed};
   }
-  if(type==='complete_task')return {type:'complete_task',taskId:params.id,label:'Completed a study task'};
+  if(type==='complete_task')return {type:'complete_task',taskId:params.id,label:'Completed a study task',executed};
   if(type==='reschedule_task'){
     const task=tasks.find(item=>item.id===params.id);const clock=String(params.newTime||'').match(/^(\d{1,2}):(\d{2})$/);
-    return task&&clock?{type:'reschedule_task',taskId:task.id,date:task.date,start:`${String(Number(clock[1])).padStart(2,'0')}:${clock[2]}`,label:'Rescheduled a study task'}:null;
+    return task&&clock?{type:'reschedule_task',taskId:task.id,date:task.date,start:`${String(Number(clock[1])).padStart(2,'0')}:${clock[2]}`,label:'Rescheduled a study task',executed}:null;
   }
   if(type==='create_plan'){
     const subject=taskSubject(params.subject);const count=Math.max(1,Math.min(30,Number(params.days)||1));const duration=Math.max(15,Math.min(600,Math.round(Number(params.hoursPerDay)*60)||60));
     const tasksToAdd=Array.from({length:count},(_,index)=>{const date=new Date(`${TODAY}T12:00:00`);date.setDate(date.getDate()+index);const due=date.toISOString().slice(0,10);return {title:`${subject} study plan · Day ${index+1}`,subject,topic:`Day ${index+1} study plan`,priority:'medium',duration,date:due,start:availableStart(tasks,due,duration),status:'todo',subtasks:[]};});
-    return {type:'create_plan',subject,days:count,hoursPerDay:duration/60,tasks:tasksToAdd,label:`Created a ${count}-day ${subject} plan`};
+    return {type:'create_plan',subject,days:count,hoursPerDay:duration/60,tasks:tasksToAdd,label:`Created a ${count}-day ${subject} plan`,executed};
   }
-  if(type==='show_schedule')return {type:'show_schedule',label:'Opened your schedule'};
-  if(type==='show_progress')return {type:'show_progress',label:'Reviewed your progress'};
-  if(type==='set_topic_confidence')return {type:'set_confidence',subjectName:params.subject,topicName:params.topic,confidence:params.confidence,label:`Updated ${params.topic} confidence`};
+  if(type==='show_schedule')return {type:'show_schedule',label:'Opened your schedule',executed};
+  if(type==='show_progress')return {type:'show_progress',label:'Reviewed your progress',executed};
+  if(type==='set_topic_confidence')return {type:'set_confidence',subjectName:params.subject,topicName:params.topic,confidence:params.confidence,label:`Updated ${params.topic} confidence`,executed};
   return null;
 }
 async function callMcp(name,args){const response=await fetch('/api/mcp/tool',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name,arguments:args})});if(!response.ok)throw new Error(`MCP ${name} failed (${response.status})`);return response.json();}
 async function executeMcpAction(action){
   if(!action)return false;
+  if(action.executed)return !['show_schedule','show_progress'].includes(action.type);
   const type=action.type;let changed=false;
   if(type==='start_timer'){await callMcp('start_focus_session',{minutes:action.minutes||25,task:action.taskId});changed=true;}
   else if(type==='add_time'){await callMcp('update_focus_timer',{command:'add_minutes',minutes:action.minutes||5});changed=true;}

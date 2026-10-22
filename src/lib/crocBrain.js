@@ -50,7 +50,7 @@ function keywordFallback(input) {
 // recent turns, and the current app snapshot to the same-origin proxy.
 export async function crocBrain(input,context={}) {
   const controller=new AbortController();
-  const timeout=window.setTimeout(()=>controller.abort(),11000);
+  const timeout=window.setTimeout(()=>controller.abort(),17000);
   let reason='Unknown error';
   try{
     let response;

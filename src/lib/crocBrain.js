@@ -31,5 +31,16 @@ export function crocBrain(input) {
   if (/(how|what).*(do|did).*(week|this week)|weekly.*(summary|progress)|week.*(progress|summary)/.test(text)) return { reply:`You’ve logged ${weeklyStats.airtime} this week and kept your ${user.streak}-day streak going. You’re making progress across Calculus, Organic Chem, and History.`, card:{type:'weekly',title:'Your Study Progress',stats:[{label:'Study airtime this week',value:weeklyStats.airtime},{label:'Sessions completed',value:weeklyStats.sessions},{label:'Missions completed',value:weeklyStats.missionsCompleted},{label:'Flight XP',value:weeklyStats.xp},{label:'Today’s airtime',value:telemetry.flightTime},{label:'Current streak',value:`${user.streak} days`}]}, action:{type:'weekly_summary',label:'Reviewed your study progress'} };
   if (/distract|turbulence|got distracted|blip/.test(text)) return {reply:'Turbulence logged. Take a breath, then we can get right back to your mission.',card:{type:'note',title:'Distraction Logged',subtitle:'No judgement, pilot. Acknowledge it and return when you’re ready.'},action:{type:'distraction',label:'Logged a distraction'}};
   if (/pause|hold|stop/.test(text)) return {reply:'I paused your focus timer. Say “resume” when you’re ready to continue.',card:{type:'timer',title:'Focus Timer Paused',subtitle:'Your remaining time is saved.'},action:{type:'pause_timer',label:'Paused your focus timer'}};
+  if (/weak|struggling|not confident/.test(text)&&/carbonyl/.test(text)) return {reply:'I lowered your Carbonyl Chemistry confidence rating so we can give that topic more attention.',card:{type:'subject',title:'Carbonyl Chemistry needs work',subtitle:'Organic Chemistry · Confidence set to 2/5'},action:{type:'set_confidence',label:'Updated Carbonyl Chemistry confidence',subjectId:'organic-chemistry',topicId:'carbonyl-chemistry',topicName:'Carbonyl Chemistry',confidence:2}};
+  if (/(add|create).*(subject|biochemistry)|add biochemistry/.test(text)) {
+    const count=Number(text.match(/(\d+)\s+chapters?/)?.[1]||4);
+    const subject={name:'Biochemistry',category:'STEM',taskSubject:'Biochemistry',colorKey:'Organic Chem',deadline:'No upcoming deadline',nextBlock:'No block planned',chapters:Array.from({length:Math.min(12,Math.max(1,count))},(_,index)=>({id:`biochem-chapter-${index+1}`,name:`Chapter ${index+1}`,topics:[]}))};
+    return {reply:`Added Biochemistry with ${subject.chapters.length} chapters to your subject library.`,card:{type:'subject',title:'Biochemistry added',subtitle:`STEM · ${subject.chapters.length} chapters`},action:{type:'add_subject',label:'Added Biochemistry',subject}};
+  }
+  if (/(add|create).*(topic)/.test(text)) {
+    const topicName=text.match(/(?:topic\s+|add\s+)([a-z][a-z0-9 -]+?)(?:\s+to\s+)/)?.[1]?.trim()||'New topic';
+    const subjectName=/biochem/.test(text)?'Biochemistry':/history/.test(text)?'World History':/calcul/.test(text)?'Advanced Calculus':'Organic Chemistry';
+    return {reply:`I added ${topicName} to ${subjectName}.`,card:{type:'subject',title:'Topic added',subtitle:`${topicName} · ${subjectName}`},action:{type:'add_topic',label:`Added ${topicName}`,subjectName,topicName}};
+  }
   return {reply:'I want to make sure I get that right. Which mission should I help with: Calculus, Organic Chem, or History?',card:null,action:null};
 }

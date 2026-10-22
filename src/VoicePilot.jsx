@@ -44,6 +44,7 @@ export function usePilotVoice(timer){
       if(result.card?.type==='today')result.card.items=taskStore.tasks.filter(task=>task.date==='2026-10-21').map(task=>({title:task.title,subtitle:`${task.subject} · ${task.start} · ${task.duration} min${task.status==='done'?' · Done':''}`}));
       const snapshot=timer.snapshot();
       const taskSnapshot=taskStore.tasks;
+      const subjectSnapshot=taskStore.subjects;
       if(result.action?.type==='start_timer')timer.startPomodoro();
       else if(result.action?.type==='add_time')timer.addFive();
       else if(result.action?.type==='pause_timer')timer.pause();
@@ -52,7 +53,10 @@ export function usePilotVoice(timer){
       else if(result.action?.type==='complete_task'){const target=taskStore.tasks.find(task=>task.id===result.action.taskId)||taskStore.tasks.find(task=>task.subject===result.action.subject&&task.status!=='done');if(target)taskStore.completeTask(target.id);}
       else if(result.action?.type==='reschedule_task'){const target=taskStore.tasks.find(task=>task.id===result.action.taskId)||taskStore.tasks.find(task=>task.subject==='History'&&task.status!=='done');if(target)taskStore.moveTask(target.id,result.action.date,result.action.start);}
       else if(result.action?.type==='create_plan')result.action.tasks.forEach(task=>taskStore.addTask({...task,id:undefined}));
-      const entry={id,prompt:clean,reply:result.reply,card:result.card,action:result.action,snapshot,taskSnapshot,calendarAdded:false,undone:false,createdAt:new Date()};
+      else if(result.action?.type==='add_subject')taskStore.addSubject(result.action.subject);
+      else if(result.action?.type==='add_topic'){const subject=taskStore.subjects.find(item=>item.name.toLowerCase()===result.action.subjectName.toLowerCase());if(subject)taskStore.addTopic(subject.id,subject.chapters[0]?.id,{name:result.action.topicName,confidence:0});}
+      else if(result.action?.type==='set_confidence'){const subject=taskStore.subjects.find(item=>item.id===result.action.subjectId)||taskStore.subjects.find(item=>item.name.toLowerCase().includes('organic'));const topic=subject?.chapters.flatMap(chapter=>chapter.topics).find(item=>item.id===result.action.topicId||item.name.toLowerCase()===result.action.topicName.toLowerCase());if(subject&&topic)taskStore.setTopicConfidence(subject.id,topic.id,result.action.confidence);}
+      const entry={id,prompt:clean,reply:result.reply,card:result.card,action:result.action,snapshot,taskSnapshot,subjectSnapshot,calendarAdded:false,undone:false,createdAt:new Date()};
       setHistory(items=>[entry,...items]);setActiveId(id);setReply(result.reply);
       if(!result.card){setClarification(result.reply);setStatus('clarification');return;}
       speak(result.reply);
@@ -86,6 +90,7 @@ export function usePilotVoice(timer){
     else if(entry.action?.type==='start_timer'||entry.action?.type==='pause_timer')timer.restore(entry.snapshot);
     if(entry.action?.type==='distraction')timer.undoDistraction();
     if(['add_task','complete_task','reschedule_task','create_plan'].includes(entry.action?.type))taskStore.replaceTasks(entry.taskSnapshot);
+    if(['add_subject','add_topic','set_confidence'].includes(entry.action?.type))taskStore.replaceSubjects(entry.subjectSnapshot);
     setHistory(items=>items.map(item=>item.id===id?{...item,undone:true}:item));setReply(`Undid: ${entry.action?.label||'that action'}.`);
   };
 
@@ -113,6 +118,7 @@ function ResultCard({entry,voice}){if(!entry?.card)return null;if(entry.undone)r
     {card.type==='weekly'&&<div className="grid gap-2 sm:grid-cols-3">{card.stats.map(item=><div key={item.label} className="min-w-0 rounded-xl bg-surface-container p-3"><p className="text-xs text-on-surface-variant">{item.label}</p><p className="mt-1 break-words font-label-md text-label-md text-on-surface">{item.value}</p></div>)}</div>}
     {card.type==='timer'&&<div className="rounded-xl bg-surface-container p-3"><p className="break-words font-label-md text-label-md">{card.subtitle}</p><p className="mt-1 text-sm font-bold text-primary">{card.minutes?`${card.minutes} minutes`:'Timer updated'}</p></div>}
     {card.type==='task'&&<div className="rounded-xl bg-surface-container p-3"><p className="break-words font-label-md text-label-md">{card.subtitle}</p><p className="mt-1 text-xs text-on-surface-variant">This change is synced to your Home, Focus and Planner screens.</p></div>}
+    {card.type==='subject'&&<div className="rounded-xl bg-surface-container p-3"><p className="break-words font-label-md text-label-md">{card.subtitle}</p><p className="mt-1 text-xs text-on-surface-variant">This change is saved in your shared subject library.</p></div>}
     {card.type==='note'&&<p className="rounded-xl bg-surface-container p-3 text-sm leading-6 text-on-surface-variant">{card.subtitle}</p>}
     <div className="flex flex-col gap-2 border-t border-surface-container pt-3 sm:flex-row">{card.type==='sprint'?<button onClick={()=>voice.addToCalendar(entry.id)} disabled={entry.calendarAdded} className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 font-label-md text-label-md text-white shadow-[0_3px_0_#005321] disabled:bg-surface-container-high disabled:text-on-surface-variant disabled:shadow-none">{entry.calendarAdded?<Check size={18}/>:<CalendarPlus size={18}/>}<span>{entry.calendarAdded?'Added to My Calendar':'Add to My Calendar'}</span></button>:<span className="flex min-h-11 flex-1 items-center justify-center rounded-full bg-surface-container-low px-4 py-2.5 text-sm font-semibold text-on-surface-variant">Action complete</span>}<button onClick={()=>voice.undo(entry.id)} className="flex min-h-11 items-center justify-center gap-2 rounded-full bg-surface-container-high px-4 py-2.5 font-label-md text-label-md text-on-surface"><RotateCcw size={16}/>Undo</button></div>
   </Card>}

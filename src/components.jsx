@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { LayoutDashboard, CalendarDays, Mic, BookOpen, Sparkles, Flame, Rocket, UserRound, X, AudioLines, CircleHelp } from 'lucide-react';
 import { user } from './data/mockData';
 import crocMascot from './assets/croc-mascot.png';
@@ -43,46 +42,28 @@ export function BottomNav({ onPTT }) {
   </div></nav>;
 }
 
-export function PTTButton({ onClick, listening = false, compact = false }) {
-  return <button onClick={onClick} aria-pressed={listening} className={`flex items-center justify-center gap-3 rounded-full bg-primary text-white shadow-[0_4px_0_#005321,0_10px_20px_rgba(0,110,47,0.22)] transition hover:bg-on-primary-fixed-variant active:translate-y-[2px] ${compact?'h-12 w-12 shrink-0':'min-h-[82px] w-full px-5 py-4'}`}>
-    <span className={`flex items-center justify-center rounded-full bg-white/15 ${compact?'h-10 w-10':'h-12 w-12'}`}><Mic size={compact?22:27}/></span>
+export function PTTButton({ onClick, listening = false, compact = false, large = false, className = '' }) {
+  return <button onClick={onClick} aria-label={compact?'Push to talk':undefined} aria-pressed={listening} className={`flex items-center justify-center gap-3 rounded-full bg-primary text-white shadow-[0_4px_0_#005321,0_10px_20px_rgba(0,110,47,0.22)] transition hover:bg-on-primary-fixed-variant active:translate-y-[2px] ${compact?(large?'h-20 w-20 shrink-0':'h-12 w-12 shrink-0'):'min-h-[82px] w-full px-5 py-4'} ${className}`}>
+    <span className={`flex items-center justify-center rounded-full ${compact?(large?'h-full w-full bg-transparent':'h-10 w-10 bg-white/15'):'h-12 w-12 bg-white/15'}`}><Mic size={compact?(large?36:22):27}/></span>
     {!compact&&<span className="text-left"><span className="block font-label-lg text-label-lg">{listening?'Listening to Croc…':'Tap and tell Croc what you need'}</span><span className="block font-label-sm text-label-sm text-white/90">Press Space or say “Hey Croc”</span></span>}
   </button>;
 }
 
-export function CrocPanel({ open, onClose, onVoiceCommand = () => {} }) {
-  const [listening,setListening] = useState(false);
-  const [transcript,setTranscript] = useState('Your conversation with Croc will appear here.');
-  const recognitionRef = useRef(null);
-  const toggleRef = useRef(() => {});
-  const commandRef = useRef(onVoiceCommand);
-  commandRef.current = onVoiceCommand;
-  const toggle = () => {
-    if (listening) { recognitionRef.current?.stop(); setListening(false); setTranscript('Listening paused. Ask me for your next study step whenever you’re ready.'); return; }
-    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!Recognition) { setTranscript('Voice input is unavailable in this browser. Choose an example command below.'); return; }
-    const recognition = new Recognition(); recognitionRef.current = recognition; recognition.lang = 'en-US'; recognition.interimResults = true;
-    recognition.onresult = event => { const text = Array.from(event.results).map(r=>r[0].transcript).join(''); setTranscript(`You: ${text}`); if(event.results[event.results.length-1].isFinal){const response=commandRef.current(text);setTranscript(`You: “${text}”\nCroc: ${response||'Got it.'}`);} };
-    recognition.onerror = () => { setListening(false); setTranscript('I missed that. Try an example command below.'); };
-    recognition.onend = () => setListening(false);
-    try { recognition.start(); setListening(true); setTranscript('Listening… speak whenever you’re ready. We’re all ears!'); }
-    catch { setListening(false); setTranscript('Croc could not start the microphone. Choose an example command below.'); }
-  };
-  toggleRef.current = toggle;
-  useEffect(()=>{
-    const handle=(e)=>{const el=e.target;const typing=el instanceof HTMLElement&&(el.isContentEditable||['INPUT','TEXTAREA','SELECT'].includes(el.tagName));if(e.code==='Space'&&!typing){e.preventDefault();toggleRef.current();}};
-    window.addEventListener('keydown',handle);return()=>window.removeEventListener('keydown',handle);
-  },[]);
-  useEffect(()=>{if(!open&&listening){recognitionRef.current?.stop();setListening(false);}},[open,listening]);
-  const panel=<><div className="mb-5 flex items-center justify-between"><div><p className="font-label-sm text-label-sm uppercase tracking-widest text-primary">StudyPilot voice AI</p><h2 className="font-headline-lg text-headline-lg">Croc Copilot</h2></div><button onClick={onClose} aria-label="Close Croc panel" className="rounded-full p-2 text-on-surface-variant hover:bg-surface-container-low min-[1281px]:hidden"><X size={21}/></button></div>
-    <div className="relative mx-auto mb-5 flex aspect-square w-[min(76%,280px)] items-center justify-center rounded-full bg-[radial-gradient(circle,#d5ffdc_0%,#ecfff0_53%,transparent_72%)]"><div className="absolute inset-5 rounded-full border border-primary-fixed/50"/><img src={crocMascot} alt="Croc, your StudyPilot copilot" className="relative z-10 h-[86%] w-[86%] rounded-full object-cover [mask-image:radial-gradient(ellipse,black_44%,transparent_76%)]"/><span className="absolute bottom-[14%] right-[9%] z-20 flex h-10 w-10 items-center justify-center rounded-full bg-secondary-fixed text-on-secondary-fixed shadow-md"><Rocket size={19}/></span></div>
-    <p className="mb-2 text-center font-headline-md text-headline-md">Hey {user.name}, ready to fly?</p><p className="mb-5 text-center text-sm text-on-surface-variant">Ask Croc for a plan, a focus session, or a quick study answer.</p>
-    <PTTButton onClick={toggle} listening={listening}/><p className="mt-2 text-center text-xs font-medium text-on-surface-variant">Hey Croc — or press the space bar</p>
-    <div className="mt-6"><h3 className="mb-2 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Try saying</h3><div className="flex flex-wrap gap-2">{['add 5 minutes','pause','I got distracted'].map(p=><button key={p} onClick={()=>{const response=commandRef.current(p);setTranscript(`You: “${p}”\nCroc: ${response||'Got it.'}`);}} className="max-w-full truncate rounded-full bg-surface-container-low px-3 py-2 text-left text-xs font-semibold text-on-surface hover:bg-surface-container">{p}</button>)}</div></div>
-    <div className="mt-6 min-h-32 rounded-2xl border border-surface-container bg-surface-container-low/60 p-4"><div className="mb-3 flex items-center gap-2 text-on-surface-variant"><AudioLines size={18}/><span className="font-label-sm text-label-sm uppercase tracking-wider">Live transcript</span><span className={`ml-auto h-2 w-2 rounded-full ${listening?'animate-pulse bg-primary-container':'bg-outline-variant'}`}/></div><p className="whitespace-pre-line break-words text-sm leading-6 text-on-surface-variant">{transcript}</p></div></>;
-  return <><div onClick={onClose} className={`fixed inset-0 z-40 bg-on-background/35 transition-opacity min-[1281px]:hidden ${open?'visible opacity-100':'invisible opacity-0'}`}/><aside className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-[420px] flex-col overflow-y-auto bg-surface px-6 py-6 shadow-2xl transition-transform duration-300 min-[768px]:max-[1280px]:w-[400px] min-[1281px]:w-[360px] min-[1281px]:translate-x-0 min-[1281px]:border-l min-[1281px]:border-surface-container ${open?'translate-x-0':'translate-x-full'}`}><div className="my-auto py-3">{panel}</div></aside></>;
+export function CrocPanel({ open, onClose, voice }) {
+  const status=voice.status;
+  const panel=<><div className="mb-5 flex items-center justify-between"><div><p className="font-label-sm text-label-sm uppercase tracking-widest text-primary">StudyPilot voice AI</p><h2 className="font-headline-lg text-headline-lg">Croc Copilot</h2><Link to="/pilot" onClick={onClose} className="mt-1 inline-block text-xs font-bold text-primary underline-offset-2 hover:underline">Open full voice workspace</Link></div><button onClick={onClose} aria-label="Close Croc panel" className="rounded-full p-2 text-on-surface-variant hover:bg-surface-container-low min-[1281px]:hidden"><X size={21}/></button></div>
+    <div className={`relative mx-auto mb-5 flex aspect-square w-[min(76%,280px)] items-center justify-center rounded-full ${status==='listening'?'bg-primary-fixed/45 shadow-[0_0_0_14px_rgba(34,197,94,0.12)]':status==='thinking'?'bg-tertiary-fixed/50':'bg-[radial-gradient(circle,#d5ffdc_0%,#ecfff0_53%,transparent_72%)]'}`}><div className="absolute inset-5 rounded-full border border-primary-fixed/50"/><img src={crocMascot} alt="Croc, your StudyPilot copilot" className="relative z-10 h-[86%] w-[86%] rounded-full object-cover [mask-image:radial-gradient(ellipse,black_44%,transparent_76%)]"/><span className="absolute bottom-[14%] right-[9%] z-20 flex h-10 w-10 items-center justify-center rounded-full bg-secondary-fixed text-on-secondary-fixed shadow-md"><Rocket size={19}/></span></div>
+    <p className="mb-2 text-center font-headline-md text-headline-md">Hey {user.name}, ready to fly?</p><p className="mb-4 text-center text-sm text-on-surface-variant">{voice.reply}</p>
+    <PTTButton onClick={voice.status==='speaking'?voice.stopSpeaking:voice.toggleListening} listening={status==='listening'}/><p className="mt-2 text-center text-xs font-medium text-on-surface-variant">{labels[status]} — press the space bar to talk</p>
+    <div className="mt-5"><h3 className="mb-2 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Try saying</h3><div className="flex flex-wrap gap-2">{['Plan a 3-day sprint for my Organic Chemistry midterm','What’s on my plan today?','Start a 25 minute sprint','Add 5 minutes','How did I do this week?'].map(p=><button key={p} onClick={()=>voice.processText(p)} className="max-w-full rounded-full bg-surface-container-low px-3 py-2 text-left text-xs font-semibold text-on-surface hover:bg-surface-container">{p}</button>)}</div></div>
+    {(voice.mode==='text'||voice.status==='error')&&<form onSubmit={voice.submit} className="mt-4 flex gap-2"><input value={voice.input} onChange={event=>voice.setInput(event.target.value)} placeholder="Type a request for Croc..." className="min-w-0 flex-1 rounded-full border border-outline-variant bg-surface-container-lowest px-3 py-2 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary-fixed"/><button type="submit" aria-label="Send message" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-white"><AudioLines size={18}/></button></form>}
+    <div className="mt-5 min-h-28 rounded-2xl border border-surface-container bg-surface-container-low/60 p-4"><div className="mb-2 flex items-center gap-2 text-on-surface-variant"><AudioLines size={18}/><span className="font-label-sm text-label-sm uppercase tracking-wider">Live transcript</span><span className={`ml-auto h-2 w-2 rounded-full ${status==='listening'?'animate-pulse bg-primary-container':'bg-outline-variant'}`}/></div><p className="whitespace-pre-line break-words text-sm leading-6 text-on-surface-variant">{voice.transcript||'Your conversation with Croc will appear here.'}</p></div>{voice.activeEntry?.card&&!voice.activeEntry.undone&&<Link to="/pilot" onClick={onClose} className="mt-3 block rounded-2xl bg-surface-container-low p-3"><span className="block text-[10px] font-bold uppercase tracking-wider text-primary">Latest result</span><span className="mt-1 block break-words text-sm font-bold text-on-surface">{voice.activeEntry.card.title}</span><span className="mt-1 block text-xs font-semibold text-primary">View result in voice workspace</span></Link>}</>;
+  const {pathname}=useLocation();
+  return <><div onClick={onClose} className={`fixed inset-0 z-40 bg-on-background/35 transition-opacity min-[1281px]:hidden ${open?'visible opacity-100':'invisible opacity-0'}`}/><aside className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-[420px] flex-col overflow-y-auto bg-surface px-6 py-6 shadow-2xl transition-transform duration-300 min-[768px]:max-[1280px]:w-[400px] min-[1281px]:w-[360px] min-[1281px]:translate-x-0 min-[1281px]:border-l min-[1281px]:border-surface-container ${open?'translate-x-0':'translate-x-full'} ${pathname==='/pilot'?'max-[767px]:hidden':''}`}><div className="my-auto py-3">{panel}</div></aside></>;
 }
 
-export function AppShell({ children, openCroc = false, onOpenCroc = () => {}, onCloseCroc = () => {}, onVoiceCommand = () => {} }) {
-  return <div className="min-h-screen bg-surface text-on-surface"><Sidebar/><div className="min-h-screen min-[768px]:ml-20 min-[1281px]:ml-64 min-[1281px]:mr-[360px]">{children}</div><BottomNav onPTT={onOpenCroc}/><CrocPanel open={openCroc} onClose={onCloseCroc} onVoiceCommand={onVoiceCommand}/></div>;
+const labels={idle:'Ready when you are',listening:'Croc is listening...',thinking:'Checking your schedule...',speaking:'Croc is speaking...',clarification:'Clarification needed',error:'Did not catch that'};
+export function AppShell({ children, openCroc = false, onOpenCroc = () => {}, onCloseCroc = () => {}, voice }) {
+  const {pathname}=useLocation();
+  return <div className="min-h-screen bg-surface text-on-surface"><Sidebar/><div className="min-h-screen min-[768px]:ml-20 min-[1281px]:ml-64 min-[1281px]:mr-[360px]">{children}</div>{pathname!=='/pilot'&&<BottomNav onPTT={onOpenCroc}/>}<CrocPanel open={openCroc} onClose={onCloseCroc} voice={voice}/></div>;
 }

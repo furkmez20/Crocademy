@@ -16,3 +16,4 @@ export const focusSounds = [
   { id: 'forest', name: 'Quiet Forest', caption: 'Breeze & birds', icon: 'trees' },
 ];
 export const focusStats = { airtime: '2h 15m', distractions: 14, xp: 50, completedCards: 48, totalCards: 60 };
+export const weeklyStats = { airtime: '8h 40m', sessions: 12, missionsCompleted: '8 of 10', xp: '+680 XP' };

@@ -22,8 +22,11 @@ export function useFocusTimer() {
   useEffect(()=>{if(running&&seconds===0){setRunning(false);setNotice('Session complete. Nice flying!');}},[running,seconds]);
   const selectMode = next => {setMode(next);setSeconds(durationFor(next));setRunning(false);setNotice('');};
   const addFive = () => {setSeconds(value=>value+300);setNotice('Added five minutes.');};
+  const removeFive = () => {setSeconds(value=>Math.max(0,value-300));setNotice('Removed the added five minutes.');};
   const pause = () => {setRunning(false);setNotice('Focus session paused.');};
   const start = () => {if(seconds===0)setSeconds(durationFor(mode));setRunning(true);setNotice('');};
+  const startPomodoro = () => {setMode('pomodoro');setSeconds(durationFor('pomodoro'));setRunning(true);setNotice('');};
+  const undoDistraction = () => setDistractions(value=>Math.max(focusStats.distractions,value-1));
   const skip = () => {setRunning(false);setSeconds(0);setNotice('Session ended. Take a breath before your next flight.');};
   const command = phrase => {
     const text=String(phrase).toLowerCase();
@@ -34,7 +37,9 @@ export function useFocusTimer() {
     return 'Try “add 5 minutes”, “pause”, or “I got distracted”.';
   };
   const task=focusTasks.find(item=>item.id===taskId)||focusTasks[0];
-  return {mode,seconds,running,task,taskId,distractions,notice,selectMode,start,pause,addFive,skip,command,setTaskId};
+  const snapshot=()=>({mode,seconds,running,taskId});
+  const restore=value=>{if(!value)return;setMode(value.mode);setSeconds(value.seconds);setRunning(value.running);setTaskId(value.taskId);};
+  return {mode,seconds,running,task,taskId,distractions,notice,selectMode,start,startPomodoro,pause,addFive,removeFive,skip,command,setTaskId,snapshot,restore,undoDistraction};
 }
 
 function MissionStatus({task,seconds}){return <div className="mb-6 flex min-w-0 items-center justify-between gap-3 rounded-2xl bg-surface-container-high px-4 py-3 shadow-sm"><div className="flex min-w-0 items-start gap-2.5"><span className="relative mt-1 flex h-3 w-3 shrink-0"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary-container opacity-75"/><span className="relative inline-flex h-3 w-3 rounded-full bg-primary"/></span><div className="min-w-0"><p className="font-label-sm text-label-sm uppercase tracking-wider text-primary">{seconds===0?'Flight session complete':'Flight mission active'}</p><p className="break-words font-headline-sm text-headline-sm leading-snug">{task.shortName}</p></div></div><div className="flex shrink-0 items-center gap-1.5 rounded-full bg-surface-container-lowest px-2.5 py-1 shadow-sm"><Clock3 size={16} className="text-tertiary"/><span className="whitespace-nowrap text-xs font-bold text-on-surface">Est. {Math.ceil(seconds/60)}m</span></div></div>}

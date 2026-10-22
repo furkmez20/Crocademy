@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { Rocket, PlaneTakeoff, FlaskConical, Clock3, Layers, MoreVertical, Radar, TriangleAlert, FilePenLine, BadgeCheck, Compass } from 'lucide-react';
 import { AppShell, Card, PTTButton, XPBar } from './components';
 import FocusScreen, { useFocusTimer } from './Focus';
+import VoicePilot, { usePilotVoice } from './VoicePilot';
 import { user, telemetry, mission, deadlines, prompts } from './data/mockData';
 import crocMascot from './assets/croc-mascot.png';
 import './style.css';
@@ -21,5 +22,6 @@ function Deadlines(){return <section className="min-w-0"><div className="mb-3 fl
 
 function Home({onPTT}){return <><main className="mx-auto min-h-screen w-full max-w-6xl px-4 pb-28 pt-20 sm:px-6 sm:pt-8 min-[768px]:pb-10 min-[1281px]:px-8"><PageHeader/><GreetingHero onPTT={onPTT}/><div className="grid min-w-0 grid-cols-1 gap-6 min-[1281px]:grid-cols-2"><Telemetry/><Mission/></div><div className="mt-6 min-w-0"><Deadlines/></div></main></>}
 function Placeholder({name}){return <main className="mx-auto min-h-screen max-w-6xl px-4 pt-20 sm:px-6 sm:pt-8"><h1 className="font-headline-xl text-headline-xl">{name}</h1></main>}
-function Root(){const [open,setOpen]=useState(false);const timer=useFocusTimer();const onCommand=phrase=>timer.command(phrase);return <BrowserRouter><AppShell openCroc={open} onOpenCroc={()=>setOpen(true)} onCloseCroc={()=>setOpen(false)} onVoiceCommand={onCommand}><Routes><Route path="/" element={<Home onPTT={()=>setOpen(true)}/>}/><Route path="/planner" element={<Placeholder name="Planner"/>}/><Route path="/subjects" element={<Placeholder name="Subjects"/>}/><Route path="/insights" element={<Placeholder name="Insights"/>}/><Route path="/focus" element={<FocusScreen timer={timer} onPTT={()=>setOpen(true)} onCommand={onCommand}/>}/><Route path="/pilot" element={<Placeholder name="Pilot AI"/>}/></Routes></AppShell></BrowserRouter>}
+function Application(){const [open,setOpen]=useState(false);const navigate=useNavigate();const timer=useFocusTimer();const voice=usePilotVoice(timer);const openAssistant=()=>{const width=window.innerWidth;if(width<768){setOpen(false);navigate('/pilot');}else if(width<=1280)setOpen(true);else voice.toggleListening();};const onFocusCommand=phrase=>timer.command(phrase);return <AppShell openCroc={open} onOpenCroc={openAssistant} onCloseCroc={()=>setOpen(false)} voice={voice}><Routes><Route path="/" element={<Home onPTT={openAssistant}/>}/><Route path="/planner" element={<Placeholder name="Planner"/>}/><Route path="/subjects" element={<Placeholder name="Subjects"/>}/><Route path="/insights" element={<Placeholder name="Insights"/>}/><Route path="/focus" element={<FocusScreen timer={timer} onPTT={openAssistant} onCommand={onFocusCommand}/>}/><Route path="/pilot" element={<VoicePilot voice={voice}/>}/></Routes></AppShell>}
+function Root(){return <BrowserRouter><Application/></BrowserRouter>}
 createRoot(document.getElementById('root')).render(<Root/>);

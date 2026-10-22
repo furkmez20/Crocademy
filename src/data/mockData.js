@@ -5,6 +5,26 @@ export const initialTasks = [
   { id:'organic', title:'Reaction Mechanisms Flashcards', subject:'Organic Chem', topic:'SN1 vs SN2 nucleophilic substitutions', priority:'high', duration:45, date:'2026-10-21', start:'14:00', status:'todo', subtasks:['Review SN1 transition states','Compare polar protic vs aprotic solvents','Practice stereochemical inversion','Complete final 10 Anki speed cards'] },
   { id:'history', title:'History Essay Outline & Sources', subject:'History', topic:'European Treaties Archive research', priority:'medium', duration:45, date:'2026-10-21', start:'16:30', status:'todo', subtasks:['Gather primary sources','Draft thesis statement'] },
 ];
+// Shared completed focus sessions. The most recent seven days total 8h 40m,
+// including 2h 15m today and a five-day active streak.
+export const initialSessions = [
+  {id:'s-1001',date:'2026-10-01',subject:'History',taskTitle:'Cold War source review',start:'10:00',minutes:40,xp:24},
+  {id:'s-1002',date:'2026-10-04',subject:'Calculus',taskTitle:'Series practice',start:'09:00',minutes:50,xp:30},
+  {id:'s-1003',date:'2026-10-07',subject:'Organic Chem',taskTitle:'Reaction flashcards',start:'14:00',minutes:45,xp:27},
+  {id:'s-1004',date:'2026-10-10',subject:'History',taskTitle:'Essay research',start:'11:00',minutes:55,xp:33},
+  {id:'s-1005',date:'2026-10-12',subject:'Calculus',taskTitle:'Integration practice',start:'09:00',minutes:45,xp:27},
+  {id:'s-1006',date:'2026-10-14',subject:'Organic Chem',taskTitle:'Mechanism review',start:'10:00',minutes:50,xp:30},
+  {id:'s-1010',date:'2026-10-17',subject:'Organic Chem',taskTitle:'Electrophilic addition review',start:'10:00',minutes:45,xp:27},
+  {id:'s-1011',date:'2026-10-17',subject:'Calculus',taskTitle:'Taylor series practice',start:'09:30',minutes:45,xp:27},
+  {id:'s-1012',date:'2026-10-18',subject:'History',taskTitle:'Primary source review',start:'11:00',minutes:45,xp:27},
+  {id:'s-1013',date:'2026-10-18',subject:'Calculus',taskTitle:'Partial derivatives',start:'09:00',minutes:30,xp:18},
+  {id:'s-1014',date:'2026-10-19',subject:'Organic Chem',taskTitle:'Carbonyl chemistry',start:'10:00',minutes:60,xp:36},
+  {id:'s-1015',date:'2026-10-19',subject:'History',taskTitle:'Essay outline research',start:'15:00',minutes:40,xp:24},
+  {id:'s-1016',date:'2026-10-20',subject:'Calculus',taskTitle:'Multiple integrals',start:'09:00',minutes:60,xp:36},
+  {id:'s-1017',date:'2026-10-20',subject:'Organic Chem',taskTitle:'SN1/SN2 drills',start:'14:00',minutes:60,xp:36},
+  {id:'s-1018',date:'2026-10-21',subject:'Calculus',taskTitle:'Calculus Morning Deep Work',start:'09:00',minutes:90,xp:54},
+  {id:'s-1019',date:'2026-10-21',subject:'Organic Chem',taskTitle:'Reaction Mechanisms Flashcards',start:'14:00',minutes:45,xp:27},
+];
 export const plannerDeadlines = [
   { date:'2026-10-22', title:'Organic Chem Midterm', subject:'Organic Chem' },
   { date:'2026-10-23', title:'History Term Paper — Draft', subject:'History' },

@@ -1,0 +1,265 @@
+np<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary-fixed": "#ffddb7", "on-secondary-container": "#496f00", "on-tertiary-fixed-variant": "#5b4220", "surface-container-lowest": "#ffffff", "on-secondary-fixed": "#121f00", "primary-fixed": "#6bff8f", "on-background": "#131b2e", "tertiary-container": "#c9a67c", "surface-tint": "#006e2f", "on-secondary-fixed-variant": "#334f00", "surface": "#faf8ff", "on-tertiary-container": "#543b1a", "on-surface-variant": "#3d4a3d", "background": "#faf8ff", "inverse-primary": "#4ae176", "surface-container-highest": "#dae2fd", "tertiary": "#755935", "surface-dim": "#d2d9f4", "tertiary-fixed-dim": "#e6c095", "inverse-surface": "#283044", "secondary-container": "#b2f746", "on-error": "#ffffff", "primary-container": "#22c55e", "primary": "#006e2f", "error": "#ba1a1a", "on-secondary": "#ffffff", "secondary-fixed": "#b2f746", "on-primary": "#ffffff", "surface-container-low": "#f2f3ff", "on-tertiary-fixed": "#2a1800", "on-primary-fixed-variant": "#005321", "surface-bright": "#faf8ff", "on-tertiary": "#ffffff", "surface-variant": "#dae2fd", "surface-container-high": "#e2e7ff", "on-error-container": "#93000a", "surface-container": "#eaedff", "outline": "#6d7b6c", "on-surface": "#131b2e", "secondary": "#446900", "on-primary-container": "#004b1e", "inverse-on-surface": "#eef0ff", "secondary-fixed-dim": "#98da27", "primary-fixed-dim": "#4ae176", "on-primary-fixed": "#002109", "outline-variant": "#bccbb9", "error-container": "#ffdad6" }, "borderRadius": { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, "spacing": { "margin": "1rem", "space-md": "0.875rem", "space-xs": "0.25rem", "gutter": "1rem", "space-lg": "1.25rem", "space-xl": "2rem", "space-sm": "0.5rem" }, "fontFamily": { "label-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "body-sm": ["Be Vietnam Pro"], "headline-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "body-lg": ["Be Vietnam Pro"], "headline-lg": ["Plus Jakarta Sans"], "headline-xl": ["Plus Jakarta Sans"], "body-md": ["Be Vietnam Pro"], "label-lg": ["Plus Jakarta Sans"], "headline-xl-mobile": ["Plus Jakarta Sans"] }, "fontSize": { "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "700" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "700" }], "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "800" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "500" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-xl": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.03em", "fontWeight": "800" }], "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }], "label-lg": ["15px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "700" }], "headline-xl-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "800" }] } } } }</script></head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center text-on-primary shadow-[0_2px_0_#15803d]"><span class="material-symbols-outlined text-[20px]">rocket_launch</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-none">StudyPilot</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Voice AI</span></div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-1 bg-surface-container-highest/60 px-space-sm py-1 rounded-full shadow-[0_2px_0_rgba(19,27,46,0.06)]"><span class="material-symbols-outlined text-tertiary text-[18px]">local_fire_department</span><span class="font-label-md text-label-md text-on-surface">5</span></div><div class="flex items-center gap-2"><div class="hidden sm:flex flex-col text-right"><span class="font-label-md text-label-md text-on-surface leading-none">Alex</span><span class="font-label-sm text-label-sm text-on-surface-variant leading-none">Lvl 4 Navigator</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-28 bg-surface px-gutter"><div class="flex flex-col w-full space-y-space-lg pb-6">
+<!-- Mascot Hero Section with Speech Balloon & Squishy Push-to-Talk -->
+<div class="relative flex flex-col items-center pt-2">
+<!-- Ambient back glow for warmth -->
+<div class="absolute -top-6 w-64 h-64 bg-primary-fixed/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex items-end justify-center w-full px-space-xs gap-space-sm relative z-10">
+<!-- Friendly Mascot Illustration -->
+<div class="relative w-28 h-28 sm:w-32 sm:h-32 flex-shrink-0">
+<img class="w-full h-full object-contain filter drop-shadow-md select-none pointer-events-none" data-alt="Delightful friendly bright green cartoon baby crocodile wearing vintage leather aviator pilot goggles pushed up on forehead and a snug brown flight bomber jacket, waving cheerfully, 3d pixar style render, warm studio lighting with mint green and soft amber accents on clean white backdrop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZf-nr7FuRDVekhx2p8hAwlijJv6G9loYHqCUv9NYkmuDYo9e8cMnTmVsUFITDAfRWf6KaQyYKFzw2xDTvLmKmzVXF3YeSMzYrUMMmahxtY5cgZ3Lrx04m-vQDIf7xXghV1-O_5R65ofl4vn0Ljb3cUIV5kXwWaL96F94GqGwglvjXwPL2xPLBf5aYXTNzI-QsjGFxwfwoeYfHIm-GXakx0juQsE1A94XOGGkKF2q_dfW1IJk8Okg3"/>
+<!-- Mascot Level Badge -->
+<div class="absolute -bottom-1 -right-1 bg-secondary-fixed text-on-secondary-fixed px-2 py-0.5 rounded-full font-label-sm text-label-sm shadow-[0_2px_0_#496f00] flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">military_tech</span>
+<span>COPILOT</span>
+</div>
+</div>
+<!-- Speech Balloon pointing to Croc -->
+<div class="relative flex-1 bg-surface-container-lowest p-space-md rounded-2xl shadow-[0_8px_24px_-4px_rgba(19,27,46,0.06)] mb-2">
+<!-- Beak triangle -->
+<div class="absolute -left-2 bottom-4 w-0 h-0 border-t-[8px] border-t-transparent border-r-[10px] border-r-surface-container-lowest border-b-[8px] border-b-transparent"></div>
+<p class="font-headline-sm text-headline-sm text-on-surface leading-snug">
+          Hey Alex! <span class="text-primary inline-block">Ready to fly?</span>
+</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+          What study mission are we launching today?
+        </p>
+</div>
+</div>
+<!-- Interactive Primary Push-to-Talk Trigger Capsule -->
+<div class="w-full mt-3">
+<button class="w-full relative group overflow-hidden bg-primary-container text-on-primary rounded-full p-4 flex items-center justify-between shadow-[0_4px_0_#15803d,0_10px_20px_rgba(34,197,94,0.25)] active:translate-y-[3px] active:shadow-[0_1px_0_#15803d] transition-all touch-manipulation cursor-pointer" id="ptt-hero-button" type="button">
+<!-- Pulsing aura ring -->
+<span class="absolute inset-0 bg-primary-fixed opacity-0 group-hover:opacity-20 animate-pulse transition-opacity"></span>
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-full bg-on-primary/20 flex items-center justify-center flex-shrink-0 shadow-inner">
+<span class="material-symbols-outlined text-[26px] text-on-primary animate-bounce">mic</span>
+</div>
+<div class="text-left flex flex-col">
+<span class="font-label-lg text-label-lg text-on-primary leading-tight">Tap and tell Croc what you need</span>
+<span class="font-label-sm text-label-sm text-on-primary/80">Or say “Hey Croc” anytime</span>
+</div>
+</div>
+<div class="w-8 h-8 rounded-full bg-on-primary/15 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-on-primary">graphic_eq</span>
+</div>
+</button>
+</div>
+<!-- Context-Aware Suggested Voice Prompts -->
+<div class="w-full mt-3 flex items-center gap-2 overflow-x-auto pb-1 pt-1 -mx-gutter px-gutter no-scrollbar">
+<button class="flex-shrink-0 bg-surface-container-low hover:bg-surface-container text-on-surface px-3.5 py-2 rounded-full font-label-md text-label-md flex items-center gap-1.5 shadow-[0_2px_0_rgba(19,27,46,0.06)] active:translate-y-[1px] transition-all" data-prompt="Start my 2 PM flashcards" onclick="triggerVoicePrompt(this.dataset.prompt)">
+<span class="text-primary-container text-[15px]">⚡</span>
+<span>“Start my 2 PM flashcards”</span>
+</button>
+<button class="flex-shrink-0 bg-surface-container-low hover:bg-surface-container text-on-surface px-3.5 py-2 rounded-full font-label-md text-label-md flex items-center gap-1.5 shadow-[0_2px_0_rgba(19,27,46,0.06)] active:translate-y-[1px] transition-all" data-prompt="Plan for Chemistry midterm in 4 days" onclick="triggerVoicePrompt(this.dataset.prompt)">
+<span class="text-secondary text-[15px]">🎯</span>
+<span>“Plan for Chem in 4 days”</span>
+</button>
+<button class="flex-shrink-0 bg-surface-container-low hover:bg-surface-container text-on-surface px-3.5 py-2 rounded-full font-label-md text-label-md flex items-center gap-1.5 shadow-[0_2px_0_rgba(19,27,46,0.06)] active:translate-y-[1px] transition-all" data-prompt="What's next on my flight plan?" onclick="triggerVoicePrompt(this.dataset.prompt)">
+<span class="text-tertiary text-[15px]">🔄</span>
+<span>“Flight plan update?”</span>
+</button>
+</div>
+</div>
+<!-- Telemetry Strip: Today's Flight Logs -->
+<div class="bg-surface-container-lowest p-space-md rounded-2xl shadow-[0_6px_20px_-4px_rgba(19,27,46,0.05)]">
+<div class="flex items-center justify-between pb-2 mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">flight_takeoff</span>
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-wider">Flight Telemetry</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold bg-primary-fixed/30 px-2 py-0.5 rounded-full">On Schedule</span>
+</div>
+<!-- Telemetry Stats Grid -->
+<div class="grid grid-cols-2 gap-3 pt-1">
+<!-- Flight Time Metric -->
+<div class="bg-surface-container-low p-3 rounded-xl flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Flight Time</span>
+<span class="font-bold text-on-surface">2h 15m</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full mt-2 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 69%;"></div>
+</div>
+<div class="flex justify-between items-center mt-1 text-on-surface-variant font-body-sm text-body-sm">
+<span>Target: 3h 15m</span>
+<span class="text-primary font-bold">69%</span>
+</div>
+</div>
+<!-- Missions & XP Metric -->
+<div class="bg-surface-container-low p-3 rounded-xl flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Missions</span>
+<span class="font-bold text-on-surface">1 of 3 cleared</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full mt-2 overflow-hidden">
+<div class="bg-secondary-container h-full rounded-full" style="width: 33%;"></div>
+</div>
+<div class="flex justify-between items-center mt-1 text-on-surface-variant font-body-sm text-body-sm">
+<span>XP Boost</span>
+<span class="font-bold text-on-secondary-container">+120 XP today</span>
+</div>
+</div>
+</div>
+<!-- Mini Navigator Level Progress -->
+<div class="mt-3 pt-2.5 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[15px]">explore</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Lvl 4 Navigator (340 / 500 XP)</span>
+</div>
+<span class="font-label-sm text-label-sm text-tertiary font-bold">160 XP to Lvl 5</span>
+</div>
+</div>
+<!-- Primary Next Up Mission Card -->
+<div class="relative">
+<div class="flex items-center justify-between mb-2 px-1">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container animate-ping"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-extrabold">Next Study Mission</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Launches in 15m</span>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-[0_12px_28px_-6px_rgba(19,27,46,0.08)] relative overflow-hidden">
+<!-- Top banner label -->
+<div class="flex items-center justify-between mb-3">
+<span class="bg-primary-fixed/40 text-on-primary-fixed-variant px-3 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1 font-bold">
+<span class="material-symbols-outlined text-[15px]">science</span>
+          Chemistry
+        </span>
+<div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary">schedule</span>
+<span>2:00 PM • 45 mins</span>
+</div>
+</div>
+<!-- Main Title -->
+<h2 class="font-headline-md text-headline-md text-on-surface leading-tight mb-2">
+        Reaction Mechanisms Flashcards
+      </h2>
+<!-- Details pills -->
+<div class="flex flex-wrap items-center gap-2 mb-5">
+<div class="bg-surface-container px-2.5 py-1 rounded-lg font-body-sm text-body-sm text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">style</span>
+<span>30 Spaced Repetition Cards</span>
+</div>
+<div class="bg-surface-container px-2.5 py-1 rounded-lg font-body-sm text-body-sm text-on-surface">
+          Unit 4: Carbonyls
+        </div>
+</div>
+<!-- Action Footer with Primary Fly Now Button & Fallback Controls -->
+<div class="flex items-center gap-3 pt-1">
+<!-- Main 'Fly Now' squishy button -->
+<button class="flex-1 min-h-[48px] bg-primary text-on-primary rounded-full px-5 py-3 font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-[0_4px_0_#005321] active:translate-y-[2px] active:shadow-[0_2px_0_#005321] transition-all touch-manipulation" type="button">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+<span>Fly Now • Start It</span>
+</button>
+<!-- Touch Fallback: Reschedule / Snooze Quick-Action -->
+<button aria-label="Adjust mission timing" class="w-12 h-12 rounded-full bg-surface-container-low text-on-surface hover:bg-surface-container flex items-center justify-center shadow-[0_3px_0_rgba(19,27,46,0.06)] active:translate-y-[2px] active:shadow-[0_1px_0_rgba(19,27,46,0.06)] transition-all touch-manipulation" type="button">
+<span class="material-symbols-outlined text-[22px]">more_time</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Radar Deadlines Carousel -->
+<div class="relative">
+<div class="flex items-center justify-between mb-2.5 px-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-tertiary text-[20px]">radar</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Radar Deadlines</h3>
+</div>
+<!-- Dots Indicator -->
+<div class="flex items-center gap-1.5">
+<span class="w-4 h-1.5 rounded-full bg-primary transition-all"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-highest"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-highest"></span>
+</div>
+</div>
+<!-- Horizontal Swipe Carousel -->
+<div class="flex items-stretch gap-3 overflow-x-auto pb-2 -mx-gutter px-gutter snap-x snap-mandatory no-scrollbar">
+<!-- Card 1: Organic Chem Midterm (Active) -->
+<div class="snap-start flex-shrink-0 w-[84%] bg-surface-container-lowest p-space-md rounded-2xl shadow-[0_4px_16px_-2px_rgba(19,27,46,0.05)] flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+              In 4 Days
+            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Thursday, 9:00 AM</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface leading-snug">
+            Organic Chem Midterm
+          </p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+            Focus: Nucleophilic Addition • Synthesis Pathways
+          </p>
+</div>
+<div class="mt-4 pt-3 bg-surface-container-low rounded-xl p-2.5 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<span class="font-label-sm text-label-sm text-on-surface">Prep Confidence</span>
+</div>
+<span class="font-label-md text-label-md text-primary font-bold">78% Ready</span>
+</div>
+</div>
+<!-- Card 2: History Term Paper (Peeked) -->
+<div class="snap-start flex-shrink-0 w-[84%] bg-surface-container-lowest p-space-md rounded-2xl shadow-[0_4px_16px_-2px_rgba(19,27,46,0.05)] flex flex-col justify-between opacity-95">
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="bg-surface-container-highest text-on-surface-variant px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">edit_document</span>
+              Friday Draft
+            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">5 Days Remaining</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface leading-snug">
+            History Term Paper
+          </p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+            Cold War Diplomacy • Primary Sources synthesis
+          </p>
+</div>
+<div class="mt-4 pt-3 bg-surface-container-low rounded-xl p-2.5 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">pending_actions</span>
+<span class="font-label-sm text-label-sm text-on-surface">Outline &amp; Draft</span>
+</div>
+<span class="font-label-md text-label-md text-secondary font-bold">Step 2 of 4</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Voice Response Feedback Toast Container (Hidden by default, triggered on prompt) -->
+<div class="fixed bottom-24 left-4 right-4 z-40 transform translate-y-32 opacity-0 transition-all duration-300 pointer-events-none flex justify-center" id="voice-toast">
+<div class="bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-full shadow-2xl flex items-center gap-3 max-w-sm">
+<span class="material-symbols-outlined text-primary-fixed text-[22px] animate-pulse">record_voice_over</span>
+<span class="font-label-md text-label-md truncate" id="toast-text">Listening to CrocPilot...</span>
+</div>
+</div>
+</div>
+<script>
+  function triggerVoicePrompt(promptText) {
+    const toast = document.getElementById('voice-toast');
+    const toastText = document.getElementById('toast-text');
+    if (!toast || !toastText) return;
+
+    toastText.textContent = 'Croc heard: "' + promptText + '"';
+    toast.classList.remove('translate-y-32', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+
+    setTimeout(() => {
+      toast.classList.add('translate-y-32', 'opacity-0');
+      toast.classList.remove('translate-y-0', 'opacity-100');
+    }, 2800);
+  }
+
+  // Hook Hero PTT Button
+  const pttHero = document.getElementById('ptt-hero-button');
+  if (pttHero) {
+    pttHero.addEventListener('click', () => {
+      triggerVoicePrompt("Listening... Speak now!");
+    });
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-bold"><div class="relative flex items-center justify-around h-20 px-2 max-w-lg mx-auto"><a aria-current="page" class="flex flex-col items-center justify-center w-14 h-14 transition-colors text-primary font-bold" data-path="cockpit" href="#"><span class="material-symbols-outlined text-[24px]">dashboard</span><span class="font-label-sm text-label-sm mt-1">Cockpit</span></a><a class="flex flex-col items-center justify-center w-14 h-14 text-on-surface-variant hover:text-on-surface transition-colors" data-path="planner" href="#"><span class="material-symbols-outlined text-[24px]">event_note</span><span class="font-label-sm text-label-sm mt-1">Planner</span></a><div class="relative flex items-center justify-center w-16 h-16 -mt-8"><div class="absolute -inset-1.5 rounded-full bg-primary-container/25 animate-pulse"></div><a aria-label="Push to Talk Assistant" class="relative w-16 h-16 rounded-full bg-primary-container flex flex-col items-center justify-center text-on-primary shadow-[0_4px_0_#15803d,0_8px_20px_rgba(34,197,94,0.35)] active:translate-y-[2px] active:shadow-[0_2px_0_#15803d] transition-all" data-path="voice-session" href="#"><span class="material-symbols-outlined text-[30px]">mic</span><span class="font-label-sm text-[9px] tracking-wide uppercase font-extrabold">PTT</span></a></div><a class="flex flex-col items-center justify-center w-14 h-14 text-on-surface-variant hover:text-on-surface transition-colors" data-path="subjects" href="#"><span class="material-symbols-outlined text-[24px]">auto_stories</span><span class="font-label-sm text-label-sm mt-1">Subjects</span></a><a class="flex flex-col items-center justify-center w-14 h-14 text-on-surface-variant hover:text-on-surface transition-colors" data-path="insights" href="#"><span class="material-symbols-outlined text-[24px]">insights</span><span class="font-label-sm text-label-sm mt-1">Insights</span></a></div></nav></body></html>

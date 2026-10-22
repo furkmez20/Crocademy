@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "tertiary-fixed": "#ffddb7", "on-secondary-container": "#496f00", "on-tertiary-fixed-variant": "#5b4220", "surface-container-lowest": "#ffffff", "on-secondary-fixed": "#121f00", "primary-fixed": "#6bff8f", "on-background": "#131b2e", "tertiary-container": "#c9a67c", "surface-tint": "#006e2f", "on-secondary-fixed-variant": "#334f00", "surface": "#faf8ff", "on-tertiary-container": "#543b1a", "on-surface-variant": "#3d4a3d", "background": "#faf8ff", "inverse-primary": "#4ae176", "surface-container-highest": "#dae2fd", "tertiary": "#755935", "surface-dim": "#d2d9f4", "tertiary-fixed-dim": "#e6c095", "inverse-surface": "#283044", "secondary-container": "#b2f746", "on-error": "#ffffff", "primary-container": "#22c55e", "primary": "#006e2f", "error": "#ba1a1a", "on-secondary": "#ffffff", "secondary-fixed": "#b2f746", "on-primary": "#ffffff", "surface-container-low": "#f2f3ff", "on-tertiary-fixed": "#2a1800", "on-primary-fixed-variant": "#005321", "surface-bright": "#faf8ff", "on-tertiary": "#ffffff", "surface-variant": "#dae2fd", "surface-container-high": "#e2e7ff", "on-error-container": "#93000a", "surface-container": "#eaedff", "outline": "#6d7b6c", "on-surface": "#131b2e", "secondary": "#446900", "on-primary-container": "#004b1e", "inverse-on-surface": "#eef0ff", "secondary-fixed-dim": "#98da27", "primary-fixed-dim": "#4ae176", "on-primary-fixed": "#002109", "outline-variant": "#bccbb9", "error-container": "#ffdad6" }, "borderRadius": { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, "spacing": { "margin": "1rem", "space-md": "0.875rem", "space-xs": "0.25rem", "gutter": "1rem", "space-lg": "1.25rem", "space-xl": "2rem", "space-sm": "0.5rem" }, "fontFamily": { "label-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "body-sm": ["Be Vietnam Pro"], "headline-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "body-lg": ["Be Vietnam Pro"], "headline-lg": ["Plus Jakarta Sans"], "headline-xl": ["Plus Jakarta Sans"], "body-md": ["Be Vietnam Pro"], "label-lg": ["Plus Jakarta Sans"], "headline-xl-mobile": ["Plus Jakarta Sans"] }, "fontSize": { "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "700" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "700" }], "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "800" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "500" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-xl": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.03em", "fontWeight": "800" }], "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }], "label-lg": ["15px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "700" }], "headline-xl-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "800" }] } } } }</script></head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center text-on-primary shadow-[0_2px_0_#15803d]"><span class="material-symbols-outlined text-[20px]">rocket_launch</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-none">StudyPilot</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Voice AI</span></div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-1 bg-surface-container-highest/60 px-space-sm py-1 rounded-full shadow-[0_2px_0_rgba(19,27,46,0.06)]"><span class="material-symbols-outlined text-tertiary text-[18px]">local_fire_department</span><span class="font-label-md text-label-md text-on-surface">5</span></div><div class="flex items-center gap-2"><div class="hidden sm:flex flex-col text-right"><span class="font-label-md text-label-md text-on-surface leading-none">Alex</span><span class="font-label-sm text-label-sm text-on-surface-variant leading-none">Lvl 4 Navigator</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-28 bg-surface px-gutter"><div class="flex flex-col w-full pb-8 space-y-space-lg">
+<!-- CrocPilot Mascot Voice Entry & Auto-Recovery Banner -->
+<div class="relative overflow-hidden rounded-lg bg-surface-container p-space-md shadow-sm">
+<div class="flex items-start gap-space-md">
+<!-- Mascot Avatar Frame -->
+<div class="relative flex-shrink-0 w-14 h-14 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-[0_3px_0_#dae2fd]">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-primary-fixed/30 flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A cute friendly 3D cartoon baby crocodile aviator wearing small leather pilot goggles and a green scarf, warm joyful expression, soft natural lighting, pastel green and mint background, playful Pixar-style rendering" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTXwsvhk7EDqpZbs7tAHjDYW0zXMbDyug6RSPYi9_Zf6PqR408L0eDLeIlfyCHinxRlS2bQjbqmRrLxKTaqXOcajLWp8uzcsX6DZYS7LrdVK6X2PELdeJwAyXkAU18GPpY6kzmGGOkogMHfADcq4fDzz-oS8IAUWbA097oQKf8RoqNmW1hOV57ygzQNQVNBprYQyjFxnZcHkJSsXIPtkvzOq6ezyuG-FEo3JlcsMeBVLgXUbuiqCBX"/>
+</div>
+<div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-secondary-container flex items-center justify-center shadow-[0_2px_0_#98da27]">
+<span class="material-symbols-outlined text-[13px] text-on-secondary-fixed">graphic_eq</span>
+</div>
+</div>
+<!-- Voice Banner Content -->
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm uppercase tracking-wider">
+            Auto-Pilot Active
+          </span>
+<span class="flex h-2 w-2 rounded-full bg-primary-container animate-pulse"></span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface leading-tight truncate">
+          Flight Schedule
+        </p>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1 mt-0.5">
+          "Tell Croc to rearrange afternoon blocks"
+        </p>
+</div>
+</div>
+<!-- Quick Action Triggers -->
+<div class="grid grid-cols-2 gap-space-sm mt-space-md">
+<button class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full bg-primary-container text-on-primary font-label-md text-label-md shadow-[0_3px_0_#15803d] active:translate-y-[2px] active:shadow-[0_1px_0_#15803d] transition-all" id="voiceArrangeBtn">
+<span class="material-symbols-outlined text-[18px]">mic</span>
+<span class="truncate">Voice Arrange</span>
+</button>
+<button class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full bg-surface-container-lowest text-on-surface font-label-md text-label-md shadow-[0_3px_0_#d2d9f4] active:translate-y-[2px] active:shadow-[0_1px_0_#d2d9f4] transition-all" id="rescheduleBtn">
+<span class="material-symbols-outlined text-tertiary text-[18px]">bolt</span>
+<span class="truncate">Catch Up (1)</span>
+</button>
+</div>
+</div>
+<!-- View Switcher Pills -->
+<div class="flex items-center justify-between bg-surface-container-low p-1.5 rounded-full shadow-sm">
+<button class="flex-1 py-1.5 px-3 rounded-full bg-surface-container-lowest text-on-surface font-label-md text-label-md text-center shadow-[0_2px_0_#dae2fd] transition-all">
+      Day <span class="text-on-surface-variant font-normal">• Oct 14</span>
+</button>
+<button class="flex-1 py-1.5 px-3 rounded-full text-on-surface-variant font-label-md text-label-md text-center hover:text-on-surface transition-colors">
+      Week
+    </button>
+<button class="flex-1 py-1.5 px-3 rounded-full text-on-surface-variant font-label-md text-label-md text-center hover:text-on-surface transition-colors">
+      Month
+    </button>
+</div>
+<!-- Horizontal Flight Schedule Calendar Strip -->
+<div class="flex flex-col space-y-2">
+<div class="flex items-center justify-between px-1">
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-wider">Flight Strip</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Week 42</span>
+</div>
+<div class="flex items-center justify-between gap-1 overflow-x-auto py-1">
+<!-- Mon 12 -->
+<button class="flex flex-col items-center justify-center min-w-[46px] py-2 px-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant shadow-sm active:translate-y-[1px]">
+<span class="font-label-sm text-label-sm">MON</span>
+<span class="font-headline-sm text-headline-sm mt-0.5">12</span>
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container mt-1"></div>
+</button>
+<!-- Tue 13 -->
+<button class="flex flex-col items-center justify-center min-w-[46px] py-2 px-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant shadow-sm active:translate-y-[1px]">
+<span class="font-label-sm text-label-sm">TUE</span>
+<span class="font-headline-sm text-headline-sm mt-0.5">13</span>
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container mt-1"></div>
+</button>
+<!-- Wed 14 - ACTIVE TODAY -->
+<button class="flex flex-col items-center justify-center min-w-[52px] py-2.5 px-2 rounded-lg bg-primary-container text-on-primary shadow-[0_3px_0_#15803d] transform -translate-y-0.5">
+<span class="font-label-sm text-label-sm uppercase font-extrabold tracking-wide">WED</span>
+<span class="font-headline-md text-headline-md leading-none mt-0.5 font-extrabold">14</span>
+<div class="flex items-center gap-0.5 mt-1">
+<div class="w-1.5 h-1.5 rounded-full bg-on-primary"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-on-primary"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-secondary-container"></div>
+</div>
+</button>
+<!-- Thu 15 -->
+<button class="flex flex-col items-center justify-center min-w-[46px] py-2 px-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant shadow-sm active:translate-y-[1px]">
+<span class="font-label-sm text-label-sm">THU</span>
+<span class="font-headline-sm text-headline-sm mt-0.5">15</span>
+<div class="w-1.5 h-1.5 rounded-full bg-surface-dim mt-1"></div>
+</button>
+<!-- Fri 16 -->
+<button class="flex flex-col items-center justify-center min-w-[46px] py-2 px-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant shadow-sm active:translate-y-[1px]">
+<span class="font-label-sm text-label-sm">FRI</span>
+<span class="font-headline-sm text-headline-sm mt-0.5">16</span>
+<div class="w-1.5 h-1.5 rounded-full bg-surface-dim mt-1"></div>
+</button>
+<!-- Sat 17 -->
+<button class="flex flex-col items-center justify-center min-w-[46px] py-2 px-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant shadow-sm active:translate-y-[1px]">
+<span class="font-label-sm text-label-sm">SAT</span>
+<span class="font-headline-sm text-headline-sm mt-0.5">17</span>
+<div class="w-1.5 h-1.5 rounded-full bg-surface-dim mt-1"></div>
+</button>
+<!-- Sun 18 -->
+<button class="flex flex-col items-center justify-center min-w-[46px] py-2 px-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant shadow-sm active:translate-y-[1px]">
+<span class="font-label-sm text-label-sm">SUN</span>
+<span class="font-headline-sm text-headline-sm mt-0.5">18</span>
+<div class="w-1.5 h-1.5 rounded-full bg-surface-dim mt-1"></div>
+</button>
+</div>
+</div>
+<!-- Interactive Mission Timeline -->
+<div class="flex flex-col space-y-3">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[20px]">flight_takeoff</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Today's Flight Log</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3 Missions</span>
+</div>
+<!-- Timeline Wrapper -->
+<div class="relative pl-6 space-y-4">
+<!-- Continuous Flight Route Line -->
+<div class="absolute left-2.5 top-3 bottom-6 w-0.5 bg-surface-container-highest rounded-full"></div>
+<!-- MISSION 1: COMPLETED -->
+<div class="relative flex flex-col p-space-md rounded-lg bg-surface-container-lowest shadow-sm">
+<!-- Route Node -->
+<div class="absolute -left-6 top-4 w-5 h-5 rounded-full bg-primary-container flex items-center justify-center text-on-primary shadow-[0_2px_0_#15803d]">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">09:00 AM - 10:30 AM</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-[10px]">90 min</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mt-1 truncate">Calculus: Morning Deep Work</h3>
+</div>
+<span class="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary-fixed/40 text-on-primary-fixed font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-primary">stars</span> +45 XP
+          </span>
+</div>
+<div class="flex items-center justify-between mt-3 pt-2 text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 font-body-sm text-body-sm text-primary font-medium">
+<span class="material-symbols-outlined text-[16px]">verified</span> Landed smoothly
+            </span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Derivatives Set 4</span>
+</div>
+</div>
+<!-- MISSION 2: NEXT / UPCOMING (CURRENT FOCUS) -->
+<div class="relative flex flex-col p-space-md rounded-lg bg-surface-container-lowest shadow-[0_4px_16px_rgba(34,197,94,0.12)]">
+<!-- Route Node Pulsing -->
+<div class="absolute -left-6 top-4 w-5 h-5 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-fixed shadow-[0_2px_0_#98da27] animate-bounce">
+<span class="material-symbols-outlined text-[13px]">navigation</span>
+</div>
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-secondary font-bold">02:00 PM - 02:45 PM</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-[10px] font-bold">NEXT UP</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mt-1">Organic Chem: Reaction Mechanisms</h3>
+</div>
+<span class="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">timer</span> 45m
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5">
+          Focus deck: SN1 vs SN2 nucleophilic substitutions. 24 cards remaining.
+        </p>
+<!-- Mission Action Pill -->
+<div class="flex items-center justify-between mt-3 pt-2">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">checklist</span>
+<span>3/4 checkpoints</span>
+</div>
+<button class="flex items-center gap-1.5 py-2 px-4 rounded-full bg-primary-container text-on-primary font-label-md text-label-md shadow-[0_3px_0_#15803d] active:translate-y-[2px] active:shadow-[0_1px_0_#15803d] transition-all">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+<span>Fly Now</span>
+</button>
+</div>
+</div>
+<!-- MISSION 3: SCHEDULED -->
+<div class="relative flex flex-col p-space-md rounded-lg bg-surface-container-low shadow-sm opacity-90">
+<!-- Route Node -->
+<div class="absolute -left-6 top-4 w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant shadow-[0_2px_0_#bccbb9]">
+<span class="material-symbols-outlined text-[13px]">schedule</span>
+</div>
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">04:30 PM - 05:15 PM</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-[10px]">45 min</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mt-1 truncate">History: Essay Outline &amp; Sources</h3>
+</div>
+<span class="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+            Planned
+          </span>
+</div>
+<div class="flex items-center justify-between mt-3 pt-2 text-on-surface-variant">
+<span class="font-body-sm text-body-sm text-on-surface-variant">European Treaties Archive research</span>
+<button class="w-7 h-7 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface-variant shadow-sm active:translate-y-[1px]">
+<span class="material-symbols-outlined text-[16px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Mascot Visual Break / Ambient Mission Card -->
+<div class="relative overflow-hidden rounded-lg bg-surface-container-high p-space-md">
+<div class="flex items-center justify-between">
+<div class="flex flex-col max-w-[65%]">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold">Navigator Fuel</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mt-0.5">Stay on the glidepath!</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Complete your chemistry session today to unlock the Night Aviator wings badge.</p>
+</div>
+<div class="w-20 h-20 rounded-full overflow-hidden bg-primary-container/20 flex-shrink-0 shadow-inner">
+<img class="w-full h-full object-cover" data-alt="An adorable 3D rendered crocodile pilot giving a cheerful thumbs-up wearing an aviation headset, warm natural daylight, vivid cartoon art style, soft green colors matching StudyPilot theme" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDexN-L-eKHmQ_0v2-Sc_u7fQKnVzLKMcDd3IvPmpqvmnt65Y7svrAOwEXuAdJjG2JdDcDiup7HGsqlBglOQN3cNoiOk3EndxNrQSlEuBFs8N8Wa2FFmoAHeY0Gec61wnkOzGIT0GBphij1dOf_REIgNVX-2B7V9BxUvrloYT1UyTifRjL2_hjRYJv4v4q3DQzvKp-rma_v6l2oPw3nCXZ-aUYMJCxAJeDs5Dz_Dn0Vd9JJFkQtqDGf"/>
+</div>
+</div>
+</div>
+<!-- Slide-up Task Detail Inspection Card -->
+<div class="flex flex-col rounded-lg bg-surface-container-lowest p-space-lg shadow-md space-y-space-md">
+<!-- Card Handle & Header -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">priority_high</span> Priority: High
+        </span>
+<span class="px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+          Organic Chemistry
+        </span>
+</div>
+<div class="flex items-center gap-1">
+<button aria-label="Edit Task" class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:text-on-surface shadow-sm active:translate-y-[1px] transition-all">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Delete Task" class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-error hover:bg-error-container shadow-sm active:translate-y-[1px] transition-all">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Title & Due Date -->
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Reaction Mechanisms Flashcards</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary">event</span> Due: Thursday, Oct 15 • 11:59 PM
+      </p>
+</div>
+<!-- Spoken Mascot Speech Bubble -->
+<div class="relative p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center flex-shrink-0 shadow-[0_2px_0_#15803d]">
+<span class="material-symbols-outlined text-[16px]">smart_toy</span>
+</div>
+<div class="flex-1 min-w-0">
+<span class="font-label-sm text-label-sm text-primary font-bold uppercase tracking-wider block">CrocPilot Voice Note</span>
+<p class="font-body-sm text-body-sm text-on-surface italic mt-0.5">
+          "Rescheduled from yesterday per your voice request. Alex, you've got plenty of altitude to knock this out before dinner!"
+        </p>
+</div>
+</div>
+<!-- Checkpoints & Progress -->
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Subtasks Checklist</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">3 of 4 Completed</span>
+</div>
+<!-- Segmented Bar -->
+<div class="w-full h-2.5 rounded-full bg-surface-container-highest overflow-hidden flex">
+<div class="h-full bg-primary-container rounded-full w-3/4 shadow-[0_1px_2px_rgba(0,110,47,0.3)]"></div>
+</div>
+<!-- Checklist items -->
+<div class="space-y-1.5 pt-1">
+<div class="flex items-center gap-2.5 py-1">
+<div class="w-5 h-5 rounded-full bg-primary-container text-on-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface line-through opacity-70">Review SN1 transition states</span>
+</div>
+<div class="flex items-center gap-2.5 py-1">
+<div class="w-5 h-5 rounded-full bg-primary-container text-on-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface line-through opacity-70">Polar protic vs aprotic solvents table</span>
+</div>
+<div class="flex items-center gap-2.5 py-1">
+<div class="w-5 h-5 rounded-full bg-primary-container text-on-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface line-through opacity-70">Inversion of stereocenter examples</span>
+</div>
+<div class="flex items-center gap-2.5 py-1">
+<div class="w-5 h-5 rounded-full bg-surface-container-highest text-transparent flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Complete final 10 Anki speed cards</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Telemetry Bar Chart: Flight Time vs Daily Goal -->
+<div class="flex flex-col p-space-md rounded-lg bg-surface-container-lowest shadow-sm space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">speed</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Daily Flight Telemetry</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Study duration progress</p>
+</div>
+</div>
+<div class="text-right">
+<span class="font-headline-sm text-headline-sm text-primary">2h 15m</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">of 3h 15m goal</span>
+</div>
+</div>
+<!-- Inline Telemetry SVG Bar Chart -->
+<div class="space-y-2">
+<svg class="w-full h-24" fill="none" viewbox="0 0 320 90" xmlns="http://www.w3.org/2000/svg">
+<!-- Target Goal Line at 75% height -->
+<line stroke="#bccbb9" stroke-dasharray="3 3" stroke-width="1.5" x1="10" x2="310" y1="24" y2="24"></line>
+<text fill="#6d7b6c" font-family="Plus Jakarta Sans" font-size="9" font-weight="700" text-anchor="end" x="310" y="20">TARGET (3h 15m)</text>
+<!-- Bar 1: Mon -->
+<rect fill="#dae2fd" height="46" rx="6" width="28" x="20" y="34"></rect>
+<text fill="#3d4a3d" font-family="Plus Jakarta Sans" font-size="10" text-anchor="middle" x="34" y="88">M</text>
+<!-- Bar 2: Tue -->
+<rect fill="#dae2fd" height="54" rx="6" width="28" x="74" y="26"></rect>
+<text fill="#3d4a3d" font-family="Plus Jakarta Sans" font-size="10" text-anchor="middle" x="88" y="88">T</text>
+<!-- Bar 3: Wed (Today - Active Fill with gradient styling) -->
+<rect fill="#22c55e" height="50" rx="6" width="28" x="128" y="30"></rect>
+<!-- Bottom rim simulation for bar -->
+<rect fill="#15803d" height="4" rx="2" width="28" x="128" y="76"></rect>
+<text fill="#006e2f" font-family="Plus Jakarta Sans" font-size="10" font-weight="800" text-anchor="middle" x="142" y="88">W</text>
+<!-- Bar 4: Thu (Projected / Empty) -->
+<rect fill="#eaedff" height="20" rx="6" width="28" x="182" y="60"></rect>
+<text fill="#6d7b6c" font-family="Plus Jakarta Sans" font-size="10" text-anchor="middle" x="196" y="88">T</text>
+<!-- Bar 5: Fri -->
+<rect fill="#eaedff" height="20" rx="6" width="28" x="236" y="60"></rect>
+<text fill="#6d7b6c" font-family="Plus Jakarta Sans" font-size="10" text-anchor="middle" x="250" y="88">F</text>
+<!-- Bar 6: Weekend AVG -->
+<rect fill="#eaedff" height="14" rx="6" width="22" x="278" y="66"></rect>
+<text fill="#6d7b6c" font-family="Plus Jakarta Sans" font-size="10" text-anchor="middle" x="289" y="88">Wknd</text>
+</svg>
+</div>
+<!-- Summary Footnote Pill -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Remaining Today: <strong>60 min</strong></span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold">69% Completed</span>
+</div>
+</div>
+</div>
+<script>
+  // Simple playful micro-interaction for schedule actions
+  document.getElementById('voiceArrangeBtn')?.addEventListener('click', function() {
+    const originalText = this.innerHTML;
+    this.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span><span>Listening...</span>';
+    setTimeout(() => {
+      this.innerHTML = originalText;
+    }, 1800);
+  });
+
+  document.getElementById('rescheduleBtn')?.addEventListener('click', function() {
+    this.innerHTML = '<span class="material-symbols-outlined text-[18px] text-primary">done_all</span><span>Synced!</span>';
+    setTimeout(() => {
+      this.innerHTML = '<span class="material-symbols-outlined text-tertiary text-[18px]">bolt</span><span class="truncate">Catch Up (0)</span>';
+    }, 1400);
+  });
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-bold"><div class="relative flex items-center justify-around h-20 px-2 max-w-lg mx-auto"><a class="flex flex-col items-center justify-center w-14 h-14 text-on-surface-variant hover:text-on-surface transition-colors" data-path="cockpit" href="#"><span class="material-symbols-outlined text-[24px]">dashboard</span><span class="font-label-sm text-label-sm mt-1">Cockpit</span></a><a aria-current="page" class="flex flex-col items-center justify-center w-14 h-14 transition-colors text-primary font-bold" data-path="planner" href="#"><span class="material-symbols-outlined text-[24px]">event_note</span><span class="font-label-sm text-label-sm mt-1">Planner</span></a><div class="relative flex items-center justify-center w-16 h-16 -mt-8"><div class="absolute -inset-1.5 rounded-full bg-primary-container/25 animate-pulse"></div><a aria-label="Push to Talk Assistant" class="relative w-16 h-16 rounded-full bg-primary-container flex flex-col items-center justify-center text-on-primary shadow-[0_4px_0_#15803d,0_8px_20px_rgba(34,197,94,0.35)] active:translate-y-[2px] active:shadow-[0_2px_0_#15803d] transition-all" data-path="voice-session" href="#"><span class="material-symbols-outlined text-[30px]">mic</span><span class="font-label-sm text-[9px] tracking-wide uppercase font-extrabold">PTT</span></a></div><a class="flex flex-col items-center justify-center w-14 h-14 text-on-surface-variant hover:text-on-surface transition-colors" data-path="subjects" href="#"><span class="material-symbols-outlined text-[24px]">auto_stories</span><span class="font-label-sm text-label-sm mt-1">Subjects</span></a><a class="flex flex-col items-center justify-center w-14 h-14 text-on-surface-variant hover:text-on-surface transition-colors" data-path="insights" href="#"><span class="material-symbols-outlined text-[24px]">insights</span><span class="font-label-sm text-label-sm mt-1">Insights</span></a></div></nav></body></html>

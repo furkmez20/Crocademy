@@ -1,1 +1,15 @@
-{"name":"studypilot","private":true,"version":"1.0.0","type":"module","scripts":{"dev":"vite","build":"vite build","preview":"vite preview"},"dependencies":{"@vitejs/plugin-react":"latest","lucide-react":"latest","react":"latest","react-dom":"latest","react-router-dom":"latest","recharts":"^3.10.1","vite":"latest"},"devDependencies":{"autoprefixer":"latest","postcss":"latest","tailwindcss":"3.4.17"}}
+{
+  "name": "studypilot-workspace",
+  "private": true,
+  "type": "module",
+  "workspaces": ["app", "server"],
+  "scripts": {
+    "dev": "concurrently -k -n server,web -c blue,green \"npm --prefix server run dev\" \"npm --prefix app run dev\"",
+    "build": "npm --prefix app run build",
+    "smoke:mcp": "npm --prefix server run smoke:mcp",
+    "test:brain": "npm --prefix server run test:brain"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

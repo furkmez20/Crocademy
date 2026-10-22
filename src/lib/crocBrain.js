@@ -73,7 +73,7 @@ export async function crocBrain(input,context={}) {
   }catch(error){
     console.error(`[Croc] Falling back: ${reason}`,error);
     const fallback=keywordFallback(input);
-    return {...fallback,reply:`I'm offline, trying the basics. ${fallback.reply}`,offline:true,fallbackReason:reason};
+    return {...fallback,reply:`I'm offline, trying the basics. ${fallback.reply}`,offline:true,brain:'keyword',fallbackReason:reason};
   }finally{
     window.clearTimeout(timeout);
   }

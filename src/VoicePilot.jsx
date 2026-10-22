@@ -84,6 +84,7 @@ export function usePilotVoice(timer){
   const [transcript,setTranscript]=useState('');
   const [reply,setReply]=useState(`Hi ${profile.name}! Ask me about your study plan or start a focus sprint.`);
   const [fallbackReason,setFallbackReason]=useState('');
+  const [brain,setBrain]=useState(null);
   const history=taskStore.conversations||[];
   const [activeId,setActiveId]=useState(null);
   const [mode,setMode]=useState('voice');
@@ -112,7 +113,8 @@ export function usePilotVoice(timer){
     const turns=history.slice(0,6).reverse().map(item=>({prompt:item.prompt,reply:item.reply}));
     window.setTimeout(async()=>{
       const response=await crocBrain(clean,{history:turns,state});
-      setFallbackReason(response.fallbackReason||'');
+      setBrain(response.brain||'keyword');
+      setFallbackReason(response.fallbackReason||response.reason||'');
       let result={...response,action:normalizeAction(response.action,taskStore.tasks),card:normalizeCard(response.card)};
       const id=`conversation-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
       if(result.action?.type==='show_progress'){
@@ -131,7 +133,7 @@ export function usePilotVoice(timer){
       }
       const entry={id,prompt:clean,reply:result.reply,card:result.card,action:result.action,snapshot,taskSnapshot,subjectSnapshot,calendarAdded:false,undone:false,createdAt:new Date()};
       await taskStore.addConversation(entry);setActiveId(id);setReply(result.reply);
-      if(!result.card){setClarification(result.reply);setStatus('clarification');return;}
+      if(!result.card&&result.reply.includes('?')){setClarification(result.reply);setStatus('clarification');return;}
       speak(result.reply);
     },180);
   };
@@ -176,7 +178,7 @@ export function usePilotVoice(timer){
   },[]);
   useEffect(()=>()=>{recognitionRef.current?.stop();window.speechSynthesis?.cancel();},[]);
 
-  return {status,transcript,reply,fallbackReason,history,activeId,activeEntry:history.find(item=>item.id===activeId),mode,input,setInput,showCommands,setShowCommands,tab,setTab,clarification,setClarification,toggleListening,stopSpeaking,submit,processText,chooseClarification,addToCalendar,undo,clearHistory};
+  return {status,transcript,reply,fallbackReason,brain,history,activeId,activeEntry:history.find(item=>item.id===activeId),mode,setMode,input,setInput,showCommands,setShowCommands,tab,setTab,clarification,setClarification,toggleListening,stopSpeaking,submit,processText,chooseClarification,addToCalendar,undo,clearHistory};
 }
 
 function VoiceStage({voice}){
@@ -186,7 +188,7 @@ function VoiceStage({voice}){
 
 function TranscriptBubble({voice}){return <Card className="w-full p-4 shadow-sm"><div className="mb-2 flex items-center justify-between gap-2 text-on-surface-variant"><span className="flex items-center gap-2 font-label-sm text-label-sm uppercase tracking-wider"><span className={`h-2 w-2 rounded-full ${voice.status==='listening'?'animate-ping bg-primary':'bg-primary'}`}/>{voice.status==='listening'?'Listening live':'You said'}</span><span className="shrink-0 text-xs">{voice.transcript?'Just now':'Ready'}</span></div><p aria-live="polite" className={`break-words text-sm leading-6 ${voice.transcript?'text-on-surface':'text-on-surface-variant'}`}>{voice.transcript?`“${voice.transcript}”`:voice.status==='listening'?'Speak now...':'Your words will appear here when you speak.'}</p></Card>}
 
-function ReplyBubble({voice}){return <div className="w-full rounded-2xl bg-surface-container-low p-4 shadow-sm"><div className="mb-2 flex items-center justify-between gap-3"><div className="flex items-center gap-2 text-primary"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-white"><Sparkles size={17}/></span><span className="font-label-md text-label-md">Croc</span></div>{voice.status==='speaking'&&<button onClick={voice.stopSpeaking} className="flex shrink-0 items-center gap-1.5 rounded-full bg-surface-container-high px-3 py-1.5 text-xs font-semibold"><StopCircle size={15} className="text-error"/>Stop</button>}</div><p aria-live="polite" className="break-words text-sm leading-6 text-on-surface">{voice.reply}</p>{voice.fallbackReason&&<p className="mt-2 text-xs font-semibold text-on-surface-variant">Fallback reason: {voice.fallbackReason}</p>}</div>}
+function ReplyBubble({voice}){return <div className="w-full rounded-2xl bg-surface-container-low p-4 shadow-sm"><div className="mb-2 flex items-center justify-between gap-3"><div className="flex items-center gap-2 text-primary"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-white"><Sparkles size={17}/></span><span className="font-label-md text-label-md">Croc</span>{voice.brain&&<span className="rounded-full bg-surface-container-high px-2 py-0.5 text-[10px] font-semibold text-on-surface-variant">{voice.brain==='bedrock'?'Bedrock':'Keyword fallback'}</span>}</div>{voice.status==='speaking'&&<button onClick={voice.stopSpeaking} className="flex shrink-0 items-center gap-1.5 rounded-full bg-surface-container-high px-3 py-1.5 text-xs font-semibold"><StopCircle size={15} className="text-error"/>Stop</button>}</div><p aria-live="polite" className="break-words text-sm leading-6 text-on-surface">{voice.reply}</p>{voice.fallbackReason&&<p className="mt-2 text-xs font-semibold text-on-surface-variant">Fallback reason: {voice.fallbackReason}</p>}</div>}
 
 function ResultCard({entry,voice}){if(!entry?.card)return null;if(entry.undone)return <Card className="w-full p-4 text-sm text-on-surface-variant">Undone: {entry.action?.label||'the previous action'}.</Card>;const card=entry.card;const maxActivity=Math.max(1,...(card.activity||[]).map(item=>item.minutes));return <Card className="w-full space-y-4 p-4 shadow-md sm:p-5"><div className="flex min-w-0 items-start justify-between gap-3"><div className="flex min-w-0 items-start gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary-container text-on-secondary-container"><AudioLines size={18}/></span><div className="min-w-0"><h2 className="break-words font-headline-sm text-headline-sm">{card.title}</h2>{card.subtitle&&<p className="mt-1 break-words text-xs leading-5 text-on-surface-variant">{card.subtitle}</p>}</div></div><span className="shrink-0 rounded-full bg-tertiary-fixed px-2.5 py-1 text-[10px] font-bold text-on-tertiary-fixed">Study plan</span></div>
     {card.type==='sprint'&&<div className="space-y-2">{card.days.map((item,index)=><div key={item.day} className="flex min-w-0 items-start gap-3 rounded-xl bg-surface-container p-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{index+1}</span><div className="min-w-0 flex-1"><p className="break-words font-label-md text-label-md">{item.day}: {item.title}</p></div><span className="shrink-0 pt-0.5 text-sm font-bold text-primary">{item.minutes} min</span></div>)}</div>}
